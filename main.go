@@ -1,16 +1,50 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
+	"fmt"
+	"log"
 
+	"github.com/gin-gonic/gin"
+	"github.com/marciomarinho/show-service/internal/config"
 	"github.com/marciomarinho/show-service/internal/handlers"
+	"github.com/marciomarinho/show-service/internal/infra"
+	"github.com/marciomarinho/show-service/internal/repository"
+	"github.com/marciomarinho/show-service/internal/service"
 )
 
 func main() {
-	router := gin.Default()
-	router.GET("/health", handlers.HealthCheck)
-	router.POST("/shows", handlers.PostShows)
-	router.GET("/shows", handlers.GetShows)
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatalf("config: %v", err)
+	}
+	if cfg.Env == config.EnvProd {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
-	router.Run()
+	// Infra
+	dyn, err := infra.NewDynamo(context.Background(), cfg)
+	if err != nil {
+		log.Fatalf("dynamo: %v", err)
+	}
+
+	// Repo
+	repo := repository.NewShowRepo(dyn)
+
+	// App
+	svc := service.NewShowService(repo)
+
+	// HTTP
+	h := handlers.NewShowHTTP(svc)
+	r := gin.Default()
+	r.GET("/health", handlers.HealthCheck)
+	r.POST("/shows", h.PostShows)
+	r.GET("/shows", h.GetShows)
+	r.GET("/shows/:slug", h.GetShowBySlug)
+
+	port := 8080
+	log.Printf("env=%s table=%s listening=:%d", cfg.Env, dyn.TableName, port)
+	if err := r.Run(fmt.Sprintf(":%d", port)); err != nil {
+		log.Fatal(err)
+	}
 }

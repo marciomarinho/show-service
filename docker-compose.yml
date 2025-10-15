@@ -1,12 +1,23 @@
 version: '3.8'
+
 services:
   dynamodb-local:
     image: amazon/dynamodb-local
     container_name: dynamodb-local
     ports:
       - "8000:8000"
-    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data"
-    volumes:
-      - dynamodb-data:/home/dynamodblocal/data
-volumes:
-  dynamodb-data:
+    # Use in-memory mode for development (no persistent storage needed)
+    command: "-jar DynamoDBLocal.jar -inMemory -port 8000"
+    restart: unless-stopped
+
+  # show-service:
+  #   build: .
+  #   depends_on:
+  #     - dynamodb-local
+  #   environment:
+  #     - APP_ENV=local
+  #   volumes:
+  #     - ./configs:/app/configs:ro
+  #   ports:
+  #     - "8080:8080"
+  #   restart: unless-stopped

@@ -1,0 +1,10 @@
+env: prod
+log:
+  level: info
+dynamodb:
+  # Set to your AWS region
+  region: "ap-southeast-2"
+  # No endpoint override in prod
+  endpointOverride: ""
+  showsTable: "shows_prod"
+  createTableIfMissing: false
