@@ -1,5 +1,7 @@
 package model
 
+//Response model
+
 type Request struct {
 	Payload      []Show `json:"payload"`
 	Skip         int    `json:"skip"`
@@ -37,4 +39,16 @@ type NextEpisode struct {
 
 type Season struct {
 	Slug string `json:"slug"`
+}
+
+//Response model
+
+type Response struct {
+	Response []ShowResponse `json:"response"`
+}
+
+type ShowResponse struct {
+	Image string `json:"image"`
+	Slug  string `json:"slug"`
+	Title string `json:"title"`
 }
