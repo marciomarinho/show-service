@@ -29,13 +29,13 @@ func main() {
 	}
 
 	// Repo
-	repo := repository.NewShowRepo(dyn)
+	repo := repository.NewShowRepository(dyn)
 
 	// App
 	svc := service.NewShowService(repo)
 
 	// HTTP
-	h := handlers.NewShowHTTP(svc)
+	h := handlers.NewShowHandler(svc)
 	r := gin.Default()
 	r.GET("/health", handlers.HealthCheck)
 	r.POST("/shows", h.PostShows)

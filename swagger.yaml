@@ -1,0 +1,120 @@
+openapi: 3.0.3
+info:
+  title: Show Service API
+  version: 1.0.0
+
+servers:
+  - url: https://REPLACE_WITH_API_GATEWAY_URL
+
+paths:
+  /oauth/token:
+    post:
+      summary: Get OAuth2 token (Cognito passthrough)
+      description: >
+        Proxies to Cognito /oauth2/token. Provide HTTP Basic Authorization header
+        with client_id:client_secret and body `grant_type=client_credentials`.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                grant_type:
+                  type: string
+                  example: client_credentials
+      responses:
+        "200":
+          description: Token
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /shows:
+    get:
+      summary: List shows
+      security:
+        - cognitoJwt: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Show'
+
+    post:
+      summary: Create shows (bulk)
+      security:
+        - cognitoJwt: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Request'
+      responses:
+        "201":
+          description: Created
+
+components:
+  securitySchemes:
+    cognitoJwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Image:
+      type: object
+      properties:
+        showImage:
+          type: string
+    NextEpisode:
+      type: object
+      properties:
+        channel: { type: string, nullable: true }
+        channelLogo: { type: string }
+        date: { type: string, nullable: true }
+        html: { type: string }
+        url: { type: string }
+    Season:
+      type: object
+      properties:
+        slug: { type: string }
+    Show:
+      type: object
+      required: [slug, title]
+      properties:
+        country: { type: string, nullable: true }
+        description: { type: string, nullable: true }
+        drm: { type: boolean, nullable: true }
+        episodeCount: { type: integer, nullable: true }
+        genre: { type: string, nullable: true }
+        image:
+          $ref: '#/components/schemas/Image'
+        language: { type: string, nullable: true }
+        nextEpisode:
+          $ref: '#/components/schemas/NextEpisode'
+        primaryColour: { type: string, nullable: true }
+        seasons:
+          type: array
+          items:
+            $ref: '#/components/schemas/Season'
+        slug: { type: string }
+        title: { type: string }
+        tvChannel: { type: string, nullable: true }
+    Request:
+      type: object
+      properties:
+        payload:
+          type: array
+          items:
+            $ref: '#/components/schemas/Show'
+        skip: { type: integer }
+        take: { type: integer }
+        totalRecords: { type: integer }

@@ -12,12 +12,18 @@ import (
 	"github.com/marciomarinho/show-service/internal/infra"
 )
 
+type ShowRepository interface {
+	Put(show domain.Show) error
+	Get(slug string) (*domain.Show, error)
+	List() ([]domain.Show, error)
+}
+
 type ShowRepo struct {
 	db    *dynamodb.Client
 	table string
 }
 
-func NewShowRepo(d *infra.Dynamo) *ShowRepo {
+func NewShowRepository(d *infra.Dynamo) ShowRepository {
 	return &ShowRepo{db: d.Client, table: d.TableName}
 }
 

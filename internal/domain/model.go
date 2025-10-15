@@ -55,10 +55,3 @@ type ShowResponse struct {
 	Slug  string `json:"slug" dynamodbav:"slug"`
 	Title string `json:"title" dynamodbav:"title"`
 }
-
-// Repository port (interface) the app layer depends on.
-type ShowRepository interface {
-	Put(show Show) error
-	Get(slug string) (*Show, error)
-	List() ([]Show, error)
-}

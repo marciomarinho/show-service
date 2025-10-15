@@ -8,15 +8,21 @@ import (
 	"github.com/marciomarinho/show-service/internal/service"
 )
 
-type ShowHTTP struct {
-	svc *service.ShowService
+type ShowHandler interface {
+	PostShows(c *gin.Context)
+	GetShows(c *gin.Context)
+	GetShowBySlug(c *gin.Context)
 }
 
-func NewShowHTTP(s *service.ShowService) *ShowHTTP {
-	return &ShowHTTP{svc: s}
+type ShowHTTPHandler struct {
+	svc service.ShowService
 }
 
-func (h *ShowHTTP) PostShows(c *gin.Context) {
+func NewShowHandler(s service.ShowService) ShowHandler {
+	return &ShowHTTPHandler{svc: s}
+}
+
+func (h *ShowHTTPHandler) PostShows(c *gin.Context) {
 	var req domain.Request
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -39,7 +45,7 @@ func (h *ShowHTTP) PostShows(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
-func (h *ShowHTTP) GetShows(c *gin.Context) {
+func (h *ShowHTTPHandler) GetShows(c *gin.Context) {
 	shows, err := h.svc.List()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -72,7 +78,7 @@ func getImageURL(img *domain.Image) string {
 	return img.ShowImage
 }
 
-func (h *ShowHTTP) GetShowBySlug(c *gin.Context) {
+func (h *ShowHTTPHandler) GetShowBySlug(c *gin.Context) {
 	slug := c.Param("slug")
 	if slug == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "slug parameter is required"})
