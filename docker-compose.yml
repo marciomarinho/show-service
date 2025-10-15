@@ -1,14 +1,13 @@
-version: '3.8'
-
 services:
   dynamodb-local:
     image: amazon/dynamodb-local
-    container_name: dynamodb-local
     ports:
       - "8000:8000"
-    # Use in-memory mode for development (no persistent storage needed)
-    command: "-jar DynamoDBLocal.jar -inMemory -port 8000"
-    restart: unless-stopped
+    command: "-jar DynamoDBLocal.jar -inMemory -sharedDb -port 8000"
+    environment:
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+      AWS_REGION: local
 
   # show-service:
   #   build: .
