@@ -1,6 +1,6 @@
 module github.com/marciomarinho/show-service
 
-go 1.23.0
+go 1.25.3
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.39.2
