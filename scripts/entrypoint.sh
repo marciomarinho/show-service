@@ -15,7 +15,7 @@ sleep 5
 # Create the shows table with the correct structure for the application
 echo "Creating DynamoDB table with GSI..."
 aws dynamodb create-table \
-  --table-name shows_local \
+  --table-name shows-local \
   --attribute-definitions \
     AttributeName=slug,AttributeType=S \
     AttributeName=drmKey,AttributeType=N \
@@ -28,7 +28,7 @@ aws dynamodb create-table \
   --region ap-southeast-2
 
 if [ $? -eq 0 ]; then
-    echo "Table 'shows_local' created successfully with GSI!"
+    echo "Table 'shows-local' created successfully with GSI!"
 else
     echo "Failed to create table"
     exit 1

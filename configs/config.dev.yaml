@@ -6,5 +6,5 @@ dynamodb:
   region: "ap-southeast-2"
   # No endpoint override in prod
   endpointOverride: ""
-  showsTable: "shows_prod"
+  showsTable: "shows-dev"
   createTableIfMissing: false

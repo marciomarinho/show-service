@@ -5,5 +5,5 @@ dynamodb:
   region: "ap-southeast-2"
   # DynamoDB Local endpoint (Docker service name)
   endpointOverride: "http://localhost:8000"
-  showsTable: "shows_local"
+  showsTable: "shows-local"
   createTableIfMissing: true
