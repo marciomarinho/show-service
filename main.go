@@ -40,7 +40,6 @@ func main() {
 	r.GET("/health", handlers.HealthCheck)
 	r.POST("/shows", h.PostShows)
 	r.GET("/shows", h.GetShows)
-	r.GET("/shows/:slug", h.GetShowBySlug)
 
 	port := 8080
 	log.Printf("env=%s table=%s listening=:%d", cfg.Env, dyn.TableName, port)

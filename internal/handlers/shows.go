@@ -11,7 +11,6 @@ import (
 type ShowHandler interface {
 	PostShows(c *gin.Context)
 	GetShows(c *gin.Context)
-	GetShowBySlug(c *gin.Context)
 }
 
 type ShowHTTPHandler struct {
@@ -46,61 +45,11 @@ func (h *ShowHTTPHandler) PostShows(c *gin.Context) {
 }
 
 func (h *ShowHTTPHandler) GetShows(c *gin.Context) {
-	shows, err := h.svc.List()
+	response, err := h.svc.List()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
-	}
-
-	// Convert domain.Show to domain.ShowResponse for API response
-	var showResponses []domain.ShowResponse
-	for _, show := range shows {
-		showResponse := domain.ShowResponse{
-			Image: getImageURL(show.Image),
-			Slug:  show.Slug,
-			Title: show.Title,
-		}
-		showResponses = append(showResponses, showResponse)
-	}
-
-	response := domain.Response{
-		Response: showResponses,
 	}
 
 	c.JSON(http.StatusOK, response)
-}
-
-// getImageURL extracts image URL from the Image struct
-func getImageURL(img *domain.Image) string {
-	if img == nil {
-		return ""
-	}
-	return img.ShowImage
-}
-
-func (h *ShowHTTPHandler) GetShowBySlug(c *gin.Context) {
-	slug := c.Param("slug")
-	if slug == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "slug parameter is required"})
-		return
-	}
-
-	show, err := h.svc.Get(slug)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	if show == nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "show not found"})
-		return
-	}
-
-	// Convert domain.Show to domain.ShowResponse for API response
-	showResponse := domain.ShowResponse{
-		Image: getImageURL(show.Image),
-		Slug:  show.Slug,
-		Title: show.Title,
-	}
-
-	c.JSON(http.StatusOK, showResponse)
 }
