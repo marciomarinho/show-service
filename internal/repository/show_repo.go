@@ -10,11 +10,19 @@ import (
 	"github.com/marciomarinho/show-service/internal/domain"
 )
 
+// ShowRepository defines the interface for show repository operations
+type ShowRepository interface {
+	Put(s domain.Show) error
+	List() ([]domain.Show, error)
+}
+
 type ShowRepo struct {
 	db DynamoAPI
 }
 
-func NewShowRepository(db DynamoAPI) *ShowRepo {
+var _ ShowRepository = (*ShowRepo)(nil)
+
+func NewShowRepository(db DynamoAPI) ShowRepository {
 	return &ShowRepo{db: db}
 }
 

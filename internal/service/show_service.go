@@ -11,10 +11,10 @@ type ShowService interface {
 }
 
 type ShowSvc struct {
-	repo *repository.ShowRepo
+	repo repository.ShowRepository
 }
 
-func NewShowService(repo *repository.ShowRepo) ShowService {
+func NewShowService(repo repository.ShowRepository) ShowService {
 	return &ShowSvc{repo: repo}
 }
 

@@ -93,12 +93,3 @@ func determineEnvironment() string {
 	// Default to local for development
 	return string(EnvLocal)
 }
-
-func getEnv(key, def string) string {
-	tmp := viper.New()
-	tmp.AutomaticEnv()
-	if s := tmp.GetString(key); s != "" {
-		return s
-	}
-	return def
-}
