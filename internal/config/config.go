@@ -1,7 +1,7 @@
 package config
 
 import (
-	"fmt"
+	"os"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -32,6 +32,8 @@ type Config struct {
 
 func Load() (*Config, error) {
 	v := viper.New()
+
+	// Set defaults
 	v.SetDefault("env", string(EnvLocal))
 	v.SetDefault("log.level", "info")
 	v.SetDefault("dynamodb.region", "ap-southeast-2")
@@ -39,14 +41,16 @@ func Load() (*Config, error) {
 	v.SetDefault("dynamodb.showsTable", "shows")
 	v.SetDefault("dynamodb.createTableIfMissing", false)
 
-	env := strings.ToLower(strings.TrimSpace(getEnv("APP_ENV", string(EnvLocal))))
-	if env != string(EnvLocal) && env != string(EnvProd) {
-		env = string(EnvLocal)
+	// Determine environment - check for ECS/AWS environment indicators
+	env := determineEnvironment()
+
+	// Try to load config file if it exists (for local development)
+	if env == string(EnvLocal) {
+		v.SetConfigFile("configs/config.local.yaml")
+		_ = v.ReadInConfig() // optional, won't fail if file doesn't exist
 	}
 
-	v.SetConfigFile(fmt.Sprintf("configs/config.%s.yaml", env))
-	_ = v.ReadInConfig() // optional
-
+	// Override with environment variables (ECS-friendly)
 	v.SetEnvPrefix("APP")
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "__"))
 	v.AutomaticEnv()
@@ -57,6 +61,29 @@ func Load() (*Config, error) {
 	}
 	cfg.Env = Env(env)
 	return &cfg, nil
+}
+
+// determineEnvironment detects if we're running in ECS/production
+func determineEnvironment() string {
+	// Check for ECS environment indicators
+	if os.Getenv("ECS_CONTAINER_METADATA_URI") != "" ||
+	   os.Getenv("AWS_EXECUTION_ENV") != "" ||
+	   os.Getenv("APP_ENV") == string(EnvProd) {
+		return string(EnvProd)
+	}
+
+	// Check APP_ENV explicitly
+	if appEnv := strings.ToLower(strings.TrimSpace(os.Getenv("APP_ENV"))); appEnv != "" {
+		if appEnv == string(EnvProd) {
+			return string(EnvProd)
+		}
+		if appEnv == string(EnvLocal) {
+			return string(EnvLocal)
+		}
+	}
+
+	// Default to local for development
+	return string(EnvLocal)
 }
 
 func getEnv(key, def string) string {
