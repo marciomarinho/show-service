@@ -38,15 +38,23 @@ func Load() (*Config, error) {
 	v.SetDefault("log.level", "info")
 	v.SetDefault("dynamodb.region", "ap-southeast-2")
 	v.SetDefault("dynamodb.endpointOverride", "")
-	v.SetDefault("dynamodb.showsTable", "shows")
 	v.SetDefault("dynamodb.createTableIfMissing", false)
 
 	// Determine environment - check for ECS/AWS environment indicators
 	env := determineEnvironment()
 
+	// Set dynamic defaults based on environment
+	v.SetDefault("dynamodb.showsTable", "shows-"+env)
+
 	// Try to load config file if it exists (for local development)
 	if env == string(EnvLocal) {
 		v.SetConfigFile("configs/config.local.yaml")
+		_ = v.ReadInConfig() // optional, won't fail if file doesn't exist
+	}
+
+	// Try to load environment-specific config file
+	if env == string(EnvDev) {
+		v.SetConfigFile("configs/config.dev.yaml")
 		_ = v.ReadInConfig() // optional, won't fail if file doesn't exist
 	}
 
