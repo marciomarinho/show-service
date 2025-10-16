@@ -18,7 +18,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("config: %v", err)
 	}
-	if cfg.Env == config.EnvProd {
+	if cfg.Env == config.EnvDev {
 		gin.SetMode(gin.ReleaseMode)
 	}
 

@@ -11,7 +11,7 @@ type Env string
 
 const (
 	EnvLocal Env = "local"
-	EnvProd  Env = "prod"
+	EnvDev   Env = "dev"
 )
 
 type Log struct {
@@ -67,15 +67,15 @@ func Load() (*Config, error) {
 func determineEnvironment() string {
 	// Check for ECS environment indicators
 	if os.Getenv("ECS_CONTAINER_METADATA_URI") != "" ||
-	   os.Getenv("AWS_EXECUTION_ENV") != "" ||
-	   os.Getenv("APP_ENV") == string(EnvProd) {
-		return string(EnvProd)
+		os.Getenv("AWS_EXECUTION_ENV") != "" ||
+		os.Getenv("APP_ENV") == string(EnvDev) {
+		return string(EnvDev)
 	}
 
 	// Check APP_ENV explicitly
 	if appEnv := strings.ToLower(strings.TrimSpace(os.Getenv("APP_ENV"))); appEnv != "" {
-		if appEnv == string(EnvProd) {
-			return string(EnvProd)
+		if appEnv == string(EnvDev) {
+			return string(EnvDev)
 		}
 		if appEnv == string(EnvLocal) {
 			return string(EnvLocal)

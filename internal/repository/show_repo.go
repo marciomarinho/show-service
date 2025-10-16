@@ -6,6 +6,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/marciomarinho/show-service/internal/domain"
 )
 
@@ -47,9 +48,14 @@ func (r *ShowRepo) Put(s domain.Show) error {
 }
 
 func (r *ShowRepo) List() ([]domain.Show, error) {
-	// simple scan version (your original). Swap to Query if you add a GSI.
-	out, err := r.db.Scan(context.Background(), &dynamodb.ScanInput{
-		TableName: awsString(r.db.TableName()),
+	// Query using GSI for DRM=true shows (drmKey=1)
+	out, err := r.db.Query(context.Background(), &dynamodb.QueryInput{
+		TableName:              awsString(r.db.TableName()),
+		IndexName:              awsString("DRMIndex"), // GSI name for drmKey
+		KeyConditionExpression: awsString("drmKey = :drmKey"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":drmKey": &types.AttributeValueMemberN{Value: "1"},
+		},
 	})
 	if err != nil {
 		return nil, err

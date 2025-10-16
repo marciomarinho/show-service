@@ -72,8 +72,8 @@ func TestShowRepo_List(t *testing.T) {
 		mockDB := mocks.NewMockDynamoAPI(t)
 
 		mockDB.On("TableName").Return("test-table").Maybe()
-		mockDB.On("Scan", mock.Anything, mock.AnythingOfType("*dynamodb.ScanInput")).
-			Return(&dynamodb.ScanOutput{
+		mockDB.On("Query", mock.Anything, mock.AnythingOfType("*dynamodb.QueryInput")).
+			Return(&dynamodb.QueryOutput{
 				Items: []map[string]types.AttributeValue{
 					{
 						"slug":         &types.AttributeValueMemberS{Value: "show/a"},
@@ -105,8 +105,8 @@ func TestShowRepo_List(t *testing.T) {
 		mockDB := mocks.NewMockDynamoAPI(t)
 
 		mockDB.On("TableName").Return("test-table").Maybe()
-		mockDB.On("Scan", mock.Anything, mock.AnythingOfType("*dynamodb.ScanInput")).
-			Return(&dynamodb.ScanOutput{Items: []map[string]types.AttributeValue{}}, nil)
+		mockDB.On("Query", mock.Anything, mock.AnythingOfType("*dynamodb.QueryInput")).
+			Return(&dynamodb.QueryOutput{Items: []map[string]types.AttributeValue{}}, nil)
 
 		repo := NewShowRepository(mockDB)
 
@@ -119,8 +119,8 @@ func TestShowRepo_List(t *testing.T) {
 		mockDB := mocks.NewMockDynamoAPI(t)
 
 		mockDB.On("TableName").Return("test-table").Maybe()
-		mockDB.On("Scan", mock.Anything, mock.AnythingOfType("*dynamodb.ScanInput")).
-			Return(nil, errors.New("DynamoDB scan failed"))
+		mockDB.On("Query", mock.Anything, mock.AnythingOfType("*dynamodb.QueryInput")).
+			Return(nil, errors.New("DynamoDB query failed"))
 
 		repo := NewShowRepository(mockDB)
 
