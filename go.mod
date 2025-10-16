@@ -9,6 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.20.14
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.51.0
 	github.com/gin-gonic/gin v1.11.0
+	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/spf13/viper v1.21.0
 )
 

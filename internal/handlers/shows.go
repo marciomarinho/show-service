@@ -28,6 +28,20 @@ func (h *ShowHTTPHandler) PostShows(c *gin.Context) {
 		return
 	}
 
+	// Validate the request
+	if err := req.Validate(); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Validation failed", "details": err.Error()})
+		return
+	}
+
+	// Additional validation for each show in the payload
+	for i, show := range req.Payload {
+		if err := show.Validate(); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Show validation failed", "show_index": i, "details": err.Error()})
+			return
+		}
+	}
+
 	// Pass the entire request to the service to handle all shows
 	if err := h.svc.Create(req); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
