@@ -48,13 +48,15 @@ func (r *ShowRepo) Put(s domain.Show) error {
 }
 
 func (r *ShowRepo) List() ([]domain.Show, error) {
-	// Query using GSI for DRM=true shows (drmKey=1)
+	// Query using GSI for DRM=true shows with episodeCount > 0
+	// GSI: gsi_drm_episode with hash_key=drmKey, range_key=episodeCount
 	out, err := r.db.Query(context.Background(), &dynamodb.QueryInput{
 		TableName:              awsString(r.db.TableName()),
-		IndexName:              awsString("DRMIndex"), // GSI name for drmKey
-		KeyConditionExpression: awsString("drmKey = :drmKey"),
+		IndexName:              awsString("gsi_drm_episode"),
+		KeyConditionExpression: awsString("drmKey = :drmKey AND episodeCount > :episodeCount"),
 		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":drmKey": &types.AttributeValueMemberN{Value: "1"},
+			":drmKey":       &types.AttributeValueMemberN{Value: "1"},
+			":episodeCount": &types.AttributeValueMemberN{Value: "0"},
 		},
 	})
 	if err != nil {
@@ -64,14 +66,7 @@ func (r *ShowRepo) List() ([]domain.Show, error) {
 	if err := attributevalue.UnmarshalListOfMaps(out.Items, &items); err != nil {
 		return nil, err
 	}
-	// filter: drm==true && episodeCount>0
-	var filtered []domain.Show
-	for _, it := range items {
-		if it.DRM != nil && *it.DRM && it.EpisodeCount != nil && *it.EpisodeCount > 0 {
-			filtered = append(filtered, it)
-		}
-	}
-	return filtered, nil
+	return items, nil
 }
 
 func awsString(s string) *string { return &s }

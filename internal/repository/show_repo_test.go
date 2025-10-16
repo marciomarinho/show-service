@@ -80,16 +80,13 @@ func TestShowRepo_List(t *testing.T) {
 						"title":        &types.AttributeValueMemberS{Value: "A"},
 						"drm":          &types.AttributeValueMemberBOOL{Value: true},
 						"episodeCount": &types.AttributeValueMemberN{Value: "3"},
+						"drmKey":       &types.AttributeValueMemberN{Value: "1"},
 						"image": &types.AttributeValueMemberM{Value: map[string]types.AttributeValue{
 							"showImage": &types.AttributeValueMemberS{Value: "http://x/y.jpg"},
 						}},
 					},
-					{
-						"slug":         &types.AttributeValueMemberS{Value: "show/b"},
-						"title":        &types.AttributeValueMemberS{Value: "B"},
-						"drm":          &types.AttributeValueMemberBOOL{Value: true},
-						"episodeCount": &types.AttributeValueMemberN{Value: "0"},
-					},
+					// This item has episodeCount=0, so it won't match the query
+					// drmKey = 1 AND episodeCount > 0, so only the first item should be returned
 				},
 			}, nil)
 
