@@ -11,11 +11,11 @@ type ShowService interface {
 }
 
 type ShowSvc struct {
-	repo repository.ShowRepository
+	repo *repository.ShowRepo
 }
 
-func NewShowService(r repository.ShowRepository) ShowService {
-	return &ShowSvc{repo: r}
+func NewShowService(repo *repository.ShowRepo) ShowService {
+	return &ShowSvc{repo: repo}
 }
 
 func (s *ShowSvc) Create(request domain.Request) error {

@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/marciomarinho/show-service/internal/config"
+	"github.com/marciomarinho/show-service/internal/repository"
 )
 
 // DynamoInterface defines the contract for DynamoDB operations
@@ -17,9 +18,12 @@ type DynamoInterface interface {
 	GetTableName() string
 }
 
+// Ensure Dynamo implements repository.DynamoAPI
+var _ repository.DynamoAPI = (*Dynamo)(nil)
+
 type Dynamo struct {
 	Client    *dynamodb.Client
-	TableName string
+	tableName string
 }
 
 func (d *Dynamo) GetClient() *dynamodb.Client {
@@ -27,10 +31,27 @@ func (d *Dynamo) GetClient() *dynamodb.Client {
 }
 
 func (d *Dynamo) GetTableName() string {
-	return d.TableName
+	return d.tableName
 }
 
-func NewDynamo(ctx context.Context, cfg *config.Config) (DynamoInterface, error) {
+// Implement repository.DynamoAPI methods
+func (d *Dynamo) PutItem(ctx context.Context, in *dynamodb.PutItemInput, optFns ...func(*dynamodb.Options)) (*dynamodb.PutItemOutput, error) {
+	return d.Client.PutItem(ctx, in, optFns...)
+}
+
+func (d *Dynamo) Query(ctx context.Context, in *dynamodb.QueryInput, optFns ...func(*dynamodb.Options)) (*dynamodb.QueryOutput, error) {
+	return d.Client.Query(ctx, in, optFns...)
+}
+
+func (d *Dynamo) Scan(ctx context.Context, in *dynamodb.ScanInput, optFns ...func(*dynamodb.Options)) (*dynamodb.ScanOutput, error) {
+	return d.Client.Scan(ctx, in, optFns...)
+}
+
+func (d *Dynamo) TableName() string {
+	return d.tableName
+}
+
+func NewDynamo(ctx context.Context, cfg *config.Config) (repository.DynamoAPI, error) {
 	var ac aws.Config
 	var err error
 
@@ -54,6 +75,6 @@ func NewDynamo(ctx context.Context, cfg *config.Config) (DynamoInterface, error)
 
 	return &Dynamo{
 		Client:    client,
-		TableName: cfg.DynamoDB.ShowsTable,
+		tableName: cfg.DynamoDB.ShowsTable,
 	}, nil
 }

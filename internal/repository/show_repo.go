@@ -4,109 +4,71 @@ import (
 	"context"
 	"errors"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-
 	"github.com/marciomarinho/show-service/internal/domain"
 )
 
-type ShowRepository interface {
-	Put(show domain.Show) error
-	List() ([]domain.Show, error)
-}
-
-type DynamoInterface interface {
-	GetClient() *dynamodb.Client
-	GetTableName() string
-}
-
 type ShowRepo struct {
-	db    *dynamodb.Client
-	table string
+	db DynamoAPI
 }
 
-func NewShowRepository(d DynamoInterface) *ShowRepo {
-	return &ShowRepo{db: d.GetClient(), table: d.GetTableName()}
+func NewShowRepository(db DynamoAPI) *ShowRepo {
+	return &ShowRepo{db: db}
 }
 
-func (r *ShowRepo) Put(show domain.Show) error {
-	if show.Slug == "" {
-		return errors.New("slug is required")
+func (r *ShowRepo) Put(s domain.Show) error {
+	// Validate before calling Dynamo
+	if err := s.Validate(); err != nil {
+		return err
 	}
 
-	// Derive GSI attributes for efficient querying
-	var drmKey int
-	if show.DRM != nil && *show.DRM {
-		drmKey = 1
-	} else {
-		drmKey = 0
+	// derive GSI helpers if you use them (safe no-op if not)
+	var k int
+	if s.DRM != nil && *s.DRM {
+		k = 1
 	}
-	show.DRMKey = &drmKey
-
-	// Ensure episodeCount is set for indexing
-	if show.EpisodeCount == nil {
+	s.DRMKey = &k
+	if s.EpisodeCount == nil {
 		zero := 0
-		show.EpisodeCount = &zero
+		s.EpisodeCount = &zero
 	}
 
-	item, err := attributevalue.MarshalMap(show)
+	item, err := attributevalue.MarshalMap(s)
 	if err != nil {
 		return err
 	}
 	_, err = r.db.PutItem(context.Background(), &dynamodb.PutItemInput{
-		TableName: &r.table, Item: item,
+		TableName:           awsString(r.db.TableName()),
+		Item:                item,
+		ConditionExpression: awsString("attribute_not_exists(slug)"),
 	})
 	return err
 }
 
 func (r *ShowRepo) List() ([]domain.Show, error) {
-	// Use GSI to efficiently query only shows with DRM enabled and episodes > 0
-	out, err := r.db.Query(context.Background(), &dynamodb.QueryInput{
-		TableName:              &r.table,
-		IndexName:              aws.String("gsi_drm_episode"),
-		KeyConditionExpression: aws.String("#dk = :true AND #ec > :zero"),
-		ExpressionAttributeNames: map[string]string{
-			"#dk":  "drmKey",
-			"#ec":  "episodeCount",
-			"#img": "image",
-			"#si":  "showImage",
-		},
-		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":true": &types.AttributeValueMemberN{Value: "1"},
-			":zero": &types.AttributeValueMemberN{Value: "0"},
-		},
-		// Return only the fields needed for the response
-		ProjectionExpression: aws.String("slug, title, #img.#si"),
-		ScanIndexForward:     aws.Bool(true),
+	// simple scan version (your original). Swap to Query if you add a GSI.
+	out, err := r.db.Scan(context.Background(), &dynamodb.ScanInput{
+		TableName: awsString(r.db.TableName()),
 	})
-
 	if err != nil {
 		return nil, err
 	}
-
-	// Unmarshal into a slim struct to avoid needing all fields
-	type slimShow struct {
-		Slug  string        `dynamodbav:"slug"`
-		Title string        `dynamodbav:"title"`
-		Image *domain.Image `dynamodbav:"image"`
-	}
-
-	var rows []slimShow
-	if err := attributevalue.UnmarshalListOfMaps(out.Items, &rows); err != nil {
+	var items []domain.Show
+	if err := attributevalue.UnmarshalListOfMaps(out.Items, &items); err != nil {
 		return nil, err
 	}
-
-	// Map to response model with only required fields
-	shows := make([]domain.Show, 0, len(rows))
-	for _, row := range rows {
-		shows = append(shows, domain.Show{
-			Slug:  row.Slug,
-			Title: row.Title,
-			Image: row.Image,
-		})
+	// filter: drm==true && episodeCount>0
+	var filtered []domain.Show
+	for _, it := range items {
+		if it.DRM != nil && *it.DRM && it.EpisodeCount != nil && *it.EpisodeCount > 0 {
+			filtered = append(filtered, it)
+		}
 	}
-
-	return shows, nil
+	return filtered, nil
 }
+
+func awsString(s string) *string { return &s }
+
+// Optional helper to surface clearer errors in tests (not required)
+var ErrInvalidShow = errors.New("invalid show")
