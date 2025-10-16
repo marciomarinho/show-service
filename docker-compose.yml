@@ -1,22 +1,9 @@
 services:
   dynamodb-local:
-    image: amazon/dynamodb-local
+    build:
+      context: ./scripts
+      dockerfile: Dockerfile.dynamodb
+    container_name: dynamodb-local
     ports:
       - "8000:8000"
-    command: "-jar DynamoDBLocal.jar -inMemory -sharedDb -port 8000"
-    environment:
-      AWS_ACCESS_KEY_ID: dummy
-      AWS_SECRET_ACCESS_KEY: dummy
-      AWS_REGION: local
-
-  # show-service:
-  #   build: .
-  #   depends_on:
-  #     - dynamodb-local
-  #   environment:
-  #     - APP_ENV=local
-  #   volumes:
-  #     - ./configs:/app/configs:ro
-  #   ports:
-  #     - "8080:8080"
-  #   restart: unless-stopped
+    restart: unless-stopped

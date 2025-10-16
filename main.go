@@ -42,7 +42,7 @@ func main() {
 	r.GET("/shows", h.GetShows)
 
 	port := 8080
-	log.Printf("env=%s table=%s listening=:%d", cfg.Env, dyn.TableName, port)
+	log.Printf("env=%s table=%s listening=:%d", cfg.Env, dyn.GetTableName(), port)
 	if err := r.Run(fmt.Sprintf(":%d", port)); err != nil {
 		log.Fatal(err)
 	}

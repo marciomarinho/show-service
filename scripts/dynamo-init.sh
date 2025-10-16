@@ -24,10 +24,15 @@ else
   echo "Creating table '${TABLE_NAME}' ..."
   aws dynamodb create-table \
     --table-name "${TABLE_NAME}" \
-    --attribute-definitions AttributeName=slug,AttributeType=S \
+    --attribute-definitions \
+      AttributeName=slug,AttributeType=S \
+      AttributeName=drmKey,AttributeType=N \
+      AttributeName=episodeCount,AttributeType=N \
     --key-schema AttributeName=slug,KeyType=HASH \
     --billing-mode PAY_PER_REQUEST \
     --table-class STANDARD \
+    --global-secondary-indexes \
+      "[{\"IndexName\": \"gsi_drm_episode\",\"KeySchema\": [{\"AttributeName\": \"drmKey\",\"KeyType\": \"HASH\"},{\"AttributeName\": \"episodeCount\",\"KeyType\": \"RANGE\"}],\"Projection\": {\"ProjectionType\": \"ALL\"}}]" \
     --endpoint-url "${ENDPOINT_URL}" \
     --region "${AWS_REGION}"
 

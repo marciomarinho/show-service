@@ -47,4 +47,5 @@ cover.out
 .DS_Store
 Thumbs.db
 show-service
-show-service.exe
+/curl_and_postman
+curl_commands.txt

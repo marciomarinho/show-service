@@ -2,7 +2,7 @@ env: local
 log:
   level: debug
 dynamodb:
-  region: local
+  region: "ap-southeast-2"
   # DynamoDB Local endpoint (Docker service name)
   endpointOverride: "http://localhost:8000"
   showsTable: "shows_local"

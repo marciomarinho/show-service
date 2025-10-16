@@ -19,10 +19,9 @@ type Log struct {
 }
 
 type DynamoDB struct {
-	Region               string `mapstructure:"region"`
-	EndpointOverride     string `mapstructure:"endpointOverride"` // http://localhost:8000 for local
-	ShowsTable           string `mapstructure:"showsTable"`
-	CreateTableIfMissing bool   `mapstructure:"createTableIfMissing"`
+	Region           string `mapstructure:"region"`
+	EndpointOverride string `mapstructure:"endpointOverride"` // http://localhost:8000 for local
+	ShowsTable       string `mapstructure:"showsTable"`
 }
 
 type Config struct {

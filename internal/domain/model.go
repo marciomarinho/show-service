@@ -34,6 +34,9 @@ type Show struct {
 	Slug          string       `json:"slug" dynamodbav:"slug"` // PK
 	Title         string       `json:"title" dynamodbav:"title"`
 	TVChannel     *string      `json:"tvChannel,omitempty" dynamodbav:"tvChannel"`
+
+	// Index helpers (not in JSON payloads; set on write for GSI)
+	DRMKey *int `json:"-" dynamodbav:"drmKey,omitempty"`
 }
 
 // Request represents API request with pagination

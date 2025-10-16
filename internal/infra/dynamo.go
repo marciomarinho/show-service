@@ -11,12 +11,26 @@ import (
 	"github.com/marciomarinho/show-service/internal/config"
 )
 
+// DynamoInterface defines the contract for DynamoDB operations
+type DynamoInterface interface {
+	GetClient() *dynamodb.Client
+	GetTableName() string
+}
+
 type Dynamo struct {
 	Client    *dynamodb.Client
 	TableName string
 }
 
-func NewDynamo(ctx context.Context, cfg *config.Config) (*Dynamo, error) {
+func (d *Dynamo) GetClient() *dynamodb.Client {
+	return d.Client
+}
+
+func (d *Dynamo) GetTableName() string {
+	return d.TableName
+}
+
+func NewDynamo(ctx context.Context, cfg *config.Config) (DynamoInterface, error) {
 	var ac aws.Config
 	var err error
 
@@ -38,43 +52,8 @@ func NewDynamo(ctx context.Context, cfg *config.Config) (*Dynamo, error) {
 
 	client := dynamodb.NewFromConfig(ac)
 
-	// Optionally create table in local
-	// if cfg.DynamoDB.CreateTableIfMissing {
-	// 	if err := ensureShowsTable(ctx, client, cfg.DynamoDB.ShowsTable); err != nil {
-	// 		return nil, err
-	// 	}
-	// }
-
 	return &Dynamo{
 		Client:    client,
 		TableName: cfg.DynamoDB.ShowsTable,
 	}, nil
 }
-
-// func ensureShowsTable(ctx context.Context, db *dynamodb.Client, table string) error {
-// 	// Check if table exists
-// 	_, err := db.DescribeTable(ctx, &dynamodb.DescribeTableInput{TableName: &table})
-// 	if err == nil {
-// 		return nil
-// 	}
-// 	var rnfe *types.ResourceNotFoundException
-// 	if !errors.As(err, &rnfe) {
-// 		return fmt.Errorf("describe table: %w", err)
-// 	}
-
-// 	// Create minimal PK-only table; adjust as needed
-// 	_, err = db.CreateTable(ctx, &dynamodb.CreateTableInput{
-// 		TableName: &table,
-// 		AttributeDefinitions: []types.AttributeDefinition{
-// 			{AttributeName: aws.String("slug"), AttributeType: types.ScalarAttributeTypeS},
-// 		},
-// 		KeySchema: []types.KeySchemaElement{
-// 			{AttributeName: aws.String("slug"), KeyType: types.KeyTypeHash},
-// 		},
-// 		BillingMode: types.BillingModePayPerRequest,
-// 	})
-// 	if err != nil {
-// 		return fmt.Errorf("create table: %w", err)
-// 	}
-// 	return nil
-// }

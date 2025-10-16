@@ -6,7 +6,7 @@ import (
 )
 
 type ShowService interface {
-	Create(show domain.Show) error
+	Create(request domain.Request) error
 	List() (*domain.Response, error)
 }
 
@@ -18,8 +18,14 @@ func NewShowService(r repository.ShowRepository) ShowService {
 	return &ShowSvc{repo: r}
 }
 
-func (s *ShowSvc) Create(show domain.Show) error {
-	return s.repo.Put(show)
+func (s *ShowSvc) Create(request domain.Request) error {
+	// Save all shows in the request payload
+	for _, show := range request.Payload {
+		if err := s.repo.Put(show); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (s *ShowSvc) List() (*domain.Response, error) {
