@@ -1,0 +1,50 @@
+# Binaries for the current project
+# By default, Go compiles binaries into the current directory,
+# named after the project's directory name.
+# If you build your binaries into a specific `bin/` directory,
+# you might want to ignore that instead.
+*.exe
+*.darwin
+*.linux
+*.windows
+*.freebsd
+*.netbsd
+*.openbsd
+*.solaris
+*.plan9
+*.dragonfly
+*.android
+*.js
+*.wasm
+
+# Build output directories
+# If you use a specific output directory for your binaries, like `bin/`
+bin/
+
+# Dependency directories
+# Go modules handle dependencies, but some older projects or
+# specific tools might generate a `vendor/` directory.
+vendor/
+
+# Test output
+# Test caches and profiles
+*.test
+*.out
+cover.out
+
+# Log files
+*.log
+
+# Editor/IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# Operating system generated files
+.DS_Store
+Thumbs.db
+show-service
+show-service.exe
