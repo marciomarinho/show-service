@@ -153,7 +153,23 @@ While DynamoDB was chosen for this implementation, the architecture supports alt
 
 <img src="./screenshots/make_start3.png" alt="Make Start">
 
+### DynamoDB running on Docker locally
+
 <img src="./screenshots/dynamodb_docker_local.png" alt="Make Start">
+
+### Manually querying DynamoDB locally
+
+  *** You will need the AWS CLI installed and configured to run this command ***
+  ```bash
+    export AWS_ACCESS_KEY_ID=dummy
+    export AWS_SECRET_ACCESS_KEY=dummy
+    export AWS_DEFAULT_REGION=ap-southeast-2
+
+    aws dynamodb scan       --table-name shows-local       --endpoint-url http://localhost:8000
+    aws dynamodb list-tables --endpoint-url http://localhost:8000
+  ```
+
+<img src="./screenshots/dynamodb_docker_local2.png" alt="Make Start">
 
 ### go run main.go
 
