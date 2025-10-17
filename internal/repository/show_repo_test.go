@@ -9,13 +9,13 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	"github.com/marciomarinho/show-service/internal/database"
+	dynamoMocks "github.com/marciomarinho/show-service/internal/database/mocks"
 	"github.com/marciomarinho/show-service/internal/domain"
 )
 
 func TestShowRepo_Put(t *testing.T) {
 	t.Run("valid show insertion", func(t *testing.T) {
-		mockDB := database.NewMockDynamoAPI(t)
+		mockDB := dynamoMocks.NewMockDynamoAPI(t)
 
 		// Set up expectations
 		mockDB.On("TableName").Return("test-table").Maybe()
@@ -39,7 +39,7 @@ func TestShowRepo_Put(t *testing.T) {
 	})
 
 	t.Run("empty slug error", func(t *testing.T) {
-		mockDB := database.NewMockDynamoAPI(t)
+		mockDB := dynamoMocks.NewMockDynamoAPI(t)
 		repo := NewShowRepository(mockDB)
 
 		err := repo.Put(domain.Show{
@@ -52,7 +52,7 @@ func TestShowRepo_Put(t *testing.T) {
 	})
 
 	t.Run("validation error", func(t *testing.T) {
-		mockDB := database.NewMockDynamoAPI(t)
+		mockDB := dynamoMocks.NewMockDynamoAPI(t)
 		repo := NewShowRepository(mockDB)
 
 		err := repo.Put(domain.Show{
@@ -67,7 +67,7 @@ func TestShowRepo_Put(t *testing.T) {
 
 func TestShowRepo_List(t *testing.T) {
 	t.Run("successful list with DRM shows", func(t *testing.T) {
-		mockDB := database.NewMockDynamoAPI(t)
+		mockDB := dynamoMocks.NewMockDynamoAPI(t)
 
 		mockDB.On("TableName").Return("test-table").Maybe()
 		mockDB.On("Query", mock.Anything, mock.AnythingOfType("*dynamodb.QueryInput")).
@@ -97,7 +97,7 @@ func TestShowRepo_List(t *testing.T) {
 	})
 
 	t.Run("empty result set", func(t *testing.T) {
-		mockDB := database.NewMockDynamoAPI(t)
+		mockDB := dynamoMocks.NewMockDynamoAPI(t)
 
 		mockDB.On("TableName").Return("test-table").Maybe()
 		mockDB.On("Query", mock.Anything, mock.AnythingOfType("*dynamodb.QueryInput")).
@@ -111,7 +111,7 @@ func TestShowRepo_List(t *testing.T) {
 	})
 
 	t.Run("scan error", func(t *testing.T) {
-		mockDB := database.NewMockDynamoAPI(t)
+		mockDB := dynamoMocks.NewMockDynamoAPI(t)
 
 		mockDB.On("TableName").Return("test-table").Maybe()
 		mockDB.On("Query", mock.Anything, mock.AnythingOfType("*dynamodb.QueryInput")).

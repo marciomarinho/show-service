@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/marciomarinho/show-service/internal/config"
+	mocks "github.com/marciomarinho/show-service/internal/database/mocks"
 )
 
 func TestRealDynamo_PutItem(t *testing.T) {
@@ -78,7 +79,7 @@ func TestRealDynamo_PutItem(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockClient := NewMockDynamoAPI(t)
+			mockClient := mocks.NewMockDynamoAPI(t)
 
 			// Create a test DynamoAPI implementation that uses our mock
 			testAPI := &testDynamoAPI{mock: mockClient}
@@ -184,7 +185,7 @@ func TestRealDynamo_Query(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockClient := NewMockDynamoAPI(t)
+			mockClient := mocks.NewMockDynamoAPI(t)
 
 			// Create a test DynamoAPI implementation that uses our mock
 			testAPI := &testDynamoAPI{mock: mockClient}
@@ -291,7 +292,7 @@ func TestRealDynamo_Scan(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockClient := NewMockDynamoAPI(t)
+			mockClient := mocks.NewMockDynamoAPI(t)
 
 			// Create a test DynamoAPI implementation that uses our mock
 			testAPI := &testDynamoAPI{mock: mockClient}
@@ -361,7 +362,7 @@ func TestRealDynamo_TableName(t *testing.T) {
 
 // testDynamoAPI is a test implementation of DynamoAPI for testing RealDynamo methods
 type testDynamoAPI struct {
-	mock      *MockDynamoAPI
+	mock      *mocks.MockDynamoAPI
 	tableName string
 }
 

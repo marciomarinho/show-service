@@ -8,14 +8,14 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/marciomarinho/show-service/internal/domain"
-	"github.com/marciomarinho/show-service/internal/repository"
+	repoMocks "github.com/marciomarinho/show-service/internal/repository/mocks"
 )
 
 func TestShowSvc_Create(t *testing.T) {
 	tests := []struct {
 		name        string
 		request     domain.Request
-		mockSetup   func(*repository.MockShowRepository)
+		mockSetup   func(*repoMocks.MockShowRepository)
 		expectError bool
 	}{
 		{
@@ -34,7 +34,7 @@ func TestShowSvc_Create(t *testing.T) {
 					},
 				},
 			},
-			mockSetup: func(m *repository.MockShowRepository) {
+			mockSetup: func(m *repoMocks.MockShowRepository) {
 				m.On("Put", mock.AnythingOfType("domain.Show")).Return(nil).Times(2)
 			},
 			expectError: false,
@@ -55,7 +55,7 @@ func TestShowSvc_Create(t *testing.T) {
 					},
 				},
 			},
-			mockSetup: func(m *repository.MockShowRepository) {
+			mockSetup: func(m *repoMocks.MockShowRepository) {
 				m.On("Put", mock.AnythingOfType("domain.Show")).Return(errors.New("database error")).Once()
 			},
 			expectError: true,
@@ -76,7 +76,7 @@ func TestShowSvc_Create(t *testing.T) {
 					},
 				},
 			},
-			mockSetup: func(m *repository.MockShowRepository) {
+			mockSetup: func(m *repoMocks.MockShowRepository) {
 				m.On("Put", mock.AnythingOfType("domain.Show")).Return(nil).Once()
 				m.On("Put", mock.AnythingOfType("domain.Show")).Return(errors.New("database error")).Once()
 			},
@@ -87,7 +87,7 @@ func TestShowSvc_Create(t *testing.T) {
 			request: domain.Request{
 				Payload: []domain.Show{},
 			},
-			mockSetup: func(m *repository.MockShowRepository) {
+			mockSetup: func(m *repoMocks.MockShowRepository) {
 				// No calls expected for empty payload
 			},
 			expectError: false,
@@ -103,7 +103,7 @@ func TestShowSvc_Create(t *testing.T) {
 					},
 				},
 			},
-			mockSetup: func(m *repository.MockShowRepository) {
+			mockSetup: func(m *repoMocks.MockShowRepository) {
 				m.On("Put", mock.AnythingOfType("domain.Show")).Return(nil).Once()
 			},
 			expectError: false,
@@ -112,7 +112,7 @@ func TestShowSvc_Create(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockRepo := new(repository.MockShowRepository)
+			mockRepo := repoMocks.NewMockShowRepository(t)
 			tt.mockSetup(mockRepo)
 
 			svc := NewShowService(mockRepo)
@@ -204,7 +204,7 @@ func TestShowSvc_List(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockRepo := new(repository.MockShowRepository)
+			mockRepo := repoMocks.NewMockShowRepository(t)
 			mockRepo.On("List").Return(tt.mockShows, tt.mockError)
 
 			svc := NewShowService(mockRepo)

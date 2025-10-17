@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/marciomarinho/show-service/internal/domain"
-	"github.com/marciomarinho/show-service/internal/service"
+	serviceMocks "github.com/marciomarinho/show-service/internal/service/mocks"
 )
 
 func TestShowHTTPHandler_PostShows(t *testing.T) {
@@ -23,7 +23,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 	tests := []struct {
 		name           string
 		requestBody    string
-		mockSetup      func(*service.MockShowService)
+		mockSetup      func(*serviceMocks.MockShowService)
 		expectedStatus int
 		expectedBody   map[string]interface{}
 	}{
@@ -41,7 +41,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 				"take": 10,
 				"totalRecords": 1
 			}`,
-			mockSetup: func(m *service.MockShowService) {
+			mockSetup: func(m *serviceMocks.MockShowService) {
 				m.EXPECT().Create(mock.AnythingOfType("domain.Request")).Return(nil)
 			},
 			expectedStatus: http.StatusCreated,
@@ -56,7 +56,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 					"invalid": "json"
 				]
 			}`,
-			mockSetup: func(m *service.MockShowService) {
+			mockSetup: func(m *serviceMocks.MockShowService) {
 				// No service call expected due to JSON parsing error
 			},
 			expectedStatus: http.StatusBadRequest,
@@ -72,7 +72,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 				"take": 10,
 				"totalRecords": 0
 			}`,
-			mockSetup: func(m *service.MockShowService) {
+			mockSetup: func(m *serviceMocks.MockShowService) {
 				// No service call expected due to validation error
 			},
 			expectedStatus: http.StatusBadRequest,
@@ -94,7 +94,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 				"take": 0,
 				"totalRecords": 1
 			}`,
-			mockSetup: func(m *service.MockShowService) {
+			mockSetup: func(m *serviceMocks.MockShowService) {
 				// No service call expected due to validation error
 			},
 			expectedStatus: http.StatusBadRequest,
@@ -116,7 +116,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 				"take": 10,
 				"totalRecords": 1
 			}`,
-			mockSetup: func(m *service.MockShowService) {
+			mockSetup: func(m *serviceMocks.MockShowService) {
 				// No service call expected due to show validation error
 			},
 			expectedStatus: http.StatusBadRequest,
@@ -138,7 +138,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 				"take": 10,
 				"totalRecords": 1
 			}`,
-			mockSetup: func(m *service.MockShowService) {
+			mockSetup: func(m *serviceMocks.MockShowService) {
 				// No service call expected due to show validation error
 			},
 			expectedStatus: http.StatusBadRequest,
@@ -160,7 +160,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 				"take": 10,
 				"totalRecords": 1
 			}`,
-			mockSetup: func(m *service.MockShowService) {
+			mockSetup: func(m *serviceMocks.MockShowService) {
 				m.EXPECT().Create(mock.AnythingOfType("domain.Request")).Return(errors.New("database connection failed"))
 			},
 			expectedStatus: http.StatusInternalServerError,
@@ -185,7 +185,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 				"take": 10,
 				"totalRecords": 2
 			}`,
-			mockSetup: func(m *service.MockShowService) {
+			mockSetup: func(m *serviceMocks.MockShowService) {
 				// No service call expected due to second show validation error
 			},
 			expectedStatus: http.StatusBadRequest,
@@ -197,7 +197,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 		{
 			name:        "large payload - edge case",
 			requestBody: createLargePayload(1000),
-			mockSetup: func(m *service.MockShowService) {
+			mockSetup: func(m *serviceMocks.MockShowService) {
 				// Large payload passes validation and should reach service
 				m.EXPECT().Create(mock.AnythingOfType("domain.Request")).Return(nil)
 			},
@@ -209,7 +209,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 		{
 			name:        "payload too large - edge case",
 			requestBody: createLargePayload(1001),
-			mockSetup: func(m *service.MockShowService) {
+			mockSetup: func(m *serviceMocks.MockShowService) {
 				// No service call expected due to payload size validation
 			},
 			expectedStatus: http.StatusBadRequest,
@@ -223,7 +223,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Setup
-			mockSvc := service.NewMockShowService(t)
+			mockSvc := serviceMocks.NewMockShowService(t)
 			tt.mockSetup(mockSvc)
 
 			handler := NewShowHandler(mockSvc)
@@ -263,13 +263,13 @@ func TestShowHTTPHandler_GetShows(t *testing.T) {
 
 	tests := []struct {
 		name           string
-		mockSetup      func(*service.MockShowService)
+		mockSetup      func(*serviceMocks.MockShowService)
 		expectedStatus int
 		expectedBody   map[string]interface{}
 	}{
 		{
 			name: "successful shows retrieval",
-			mockSetup: func(m *service.MockShowService) {
+			mockSetup: func(m *serviceMocks.MockShowService) {
 				m.EXPECT().List().Return(&domain.Response{
 					Response: []domain.ShowResponse{
 						{
@@ -303,7 +303,7 @@ func TestShowHTTPHandler_GetShows(t *testing.T) {
 		},
 		{
 			name: "empty shows list",
-			mockSetup: func(m *service.MockShowService) {
+			mockSetup: func(m *serviceMocks.MockShowService) {
 				m.EXPECT().List().Return(&domain.Response{
 					Response: []domain.ShowResponse{},
 				}, nil)
@@ -315,7 +315,7 @@ func TestShowHTTPHandler_GetShows(t *testing.T) {
 		},
 		{
 			name: "service error",
-			mockSetup: func(m *service.MockShowService) {
+			mockSetup: func(m *serviceMocks.MockShowService) {
 				m.EXPECT().List().Return((*domain.Response)(nil), errors.New("database query failed"))
 			},
 			expectedStatus: http.StatusInternalServerError,
@@ -325,7 +325,7 @@ func TestShowHTTPHandler_GetShows(t *testing.T) {
 		},
 		{
 			name: "service returns nil response",
-			mockSetup: func(m *service.MockShowService) {
+			mockSetup: func(m *serviceMocks.MockShowService) {
 				m.EXPECT().List().Return((*domain.Response)(nil), nil)
 			},
 			expectedStatus: http.StatusOK,
@@ -336,7 +336,7 @@ func TestShowHTTPHandler_GetShows(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Setup
-			mockSvc := service.NewMockShowService(t)
+			mockSvc := serviceMocks.NewMockShowService(t)
 			tt.mockSetup(mockSvc)
 
 			handler := NewShowHandler(mockSvc)
