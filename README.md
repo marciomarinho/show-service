@@ -201,7 +201,7 @@ curl -X POST http://localhost:8080/shows \
 {"message":"Shows created successfully"}       
 ```
 
-<img src="./screenshots/localhost_request1.png" alt="Post Shows">
+<img src="./screenshots/localhost_request2.png" alt="Post Shows">
 
 #### List Shows
 ```bash
