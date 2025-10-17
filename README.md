@@ -145,7 +145,13 @@ While DynamoDB was chosen for this implementation, the architecture supports alt
 
 <img src="./screenshots/make_dev.png" alt="Make Dev">
 
+### make start
 
+<img src="./screenshots/make_start1.png" alt="Make Start">
+
+<img src="./screenshots/make_start2.png" alt="Make Start">
+
+<img src="./screenshots/make_start3.png" alt="Make Start">
 
 ## 📋 API Endpoints
 
