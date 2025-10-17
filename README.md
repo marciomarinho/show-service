@@ -153,6 +153,12 @@ While DynamoDB was chosen for this implementation, the architecture supports alt
 
 <img src="./screenshots/make_start3.png" alt="Make Start">
 
+<img src="./screenshots/dynamodb_docker_local.png" alt="Make Start">
+
+### go run main.go
+
+<img src="./screenshots/go_run_main.go.png" alt="Go Run Main Go">
+
 ## 📋 API Endpoints
 
 ### Health Check
