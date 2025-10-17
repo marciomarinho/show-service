@@ -192,21 +192,16 @@ POST   /shows     # Create new shows (batch)
 
 #### Create Shows
 ```bash
+cd curl_for_manual_tests
+
 curl -X POST http://localhost:8080/shows \
-  -H "Content-Type: application/json" \
-  -d '{
-    "payload": [
-      {
-        "slug": "show/example-show",
-        "title": "Example Show",
-        "seasons": [{"slug": "show/example-show/season/1"}]
-      }
-    ],
-    "skip": 0,
-    "take": 10,
-    "totalRecords": 1
-  }'
+      -H "Content-Type: application/json" \
+      -d @shows_request.json
+
+{"message":"Shows created successfully"}       
 ```
+
+<img src="./screenshots/localhost_request1.png" alt="Make Start">
 
 #### List Shows
 ```bash
