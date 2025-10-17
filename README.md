@@ -315,7 +315,7 @@ packages:
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `ENV` | Environment (local/dev/prod) | local |
-| `DYNAMODB_REGION` | AWS region | us-east-1 |
+| `DYNAMODB_REGION` | AWS region | ap-southeast-2 |
 | `DYNAMODB_ENDPOINT` | DynamoDB endpoint | http://localhost:8000 |
 | `SHOWS_TABLE` | DynamoDB table name | shows-local |
 | `APP_COGNITO_USER_POOL_ID` | Cognito User Pool ID | - |
@@ -332,13 +332,13 @@ env: local
 log:
   level: info
 dynamodb:
-  region: us-east-1
+  region: ap-southeast-2
   endpoint_override: http://localhost:8000
   shows_table: shows-local
 cognito:
   user_pool_id: your-user-pool-id
   client_id: your-client-id
-  region: us-east-1
+  region: ap-southeast-2
   jwks_url: ""  # Auto-constructed if empty
 ## 🔐 Authentication
 
@@ -377,16 +377,34 @@ Different endpoints require different scopes from the configured `valid_scopes` 
 
 ### Example Authentication
 
+* You will need cognito_id and cognito_secret ( provided via email )
+
 ```bash
 # Get token from Cognito (example)
-curl -X POST https://your-domain.auth.us-east-1.amazoncognito.com/oauth2/token \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -u "client_id:client_secret" \
-  -d "grant_type=client_credentials"
+BEARER_TOKEN=$(
+  curl --location --request POST "https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/oauth/token" \
+    --header "Authorization: Basic <id:secret encoded in base64>" \
+    --header 'Content-Type: application/x-www-form-urlencoded' \
+    --data-urlencode 'grant_type=client_credentials' \
+    --data-urlencode 'scope=https://show-service-dev.api/shows.read https://show-service-dev.api/shows.write' \
+    | jq -r '.access_token'
+)
 
-# Use token in requests
-curl -X GET http://localhost:8080/shows \
-  -H "Authorization: Bearer your-jwt-token"
+# Use token in the header for GET requests
+curl -X GET https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/shows \
+  -H "Authorization: Bearer $BEARER_TOKEN"
+
+# Use token in the header for POST requests
+# Make sure you have the shows_request.json file (payload) in the same directory
+# Alternatively, you can also use :
+## Posman - https://www.postman.com/
+## Insomnia - https://github.com/Kong/insomnia
+## etc.
+curl --location --request POST https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/shows \
+  --header "Authorization: Bearer $BEARER_TOKEN" \
+  --header "Content-Type: application/json" \      
+  -d @shows_request.json
+
 ```
 
 ### Configuration
@@ -395,9 +413,9 @@ Configure Cognito settings in `configs/config.yaml`:
 
 ```yaml
 cognito:
-  user_pool_id: us-east-1_XXXXXXXXX
+  user_pool_id: ap-southeast-2_XXXXXXXXX
   client_id: 1a2b3c4d5e6f7g8h9i0j
-  region: us-east-1
+  region: ap-southeast-2
   jwks_url: ""  # Auto-constructed if empty
   valid_scopes:
     - "https://show-service-prod.api/shows.read"
