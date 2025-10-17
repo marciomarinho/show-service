@@ -82,14 +82,7 @@ func Load() (*Config, error) {
 
 // determineEnvironment detects if we're running in ECS/production
 func determineEnvironment() string {
-	// Check for ECS environment indicators
-	if os.Getenv("ECS_CONTAINER_METADATA_URI") != "" ||
-		os.Getenv("AWS_EXECUTION_ENV") != "" ||
-		os.Getenv("APP_ENV") == string(EnvDev) {
-		return string(EnvDev)
-	}
-
-	// Check APP_ENV explicitly
+	// Check APP_ENV explicitly first to allow override
 	if appEnv := strings.ToLower(strings.TrimSpace(os.Getenv("APP_ENV"))); appEnv != "" {
 		if appEnv == string(EnvDev) {
 			return string(EnvDev)
@@ -97,6 +90,12 @@ func determineEnvironment() string {
 		if appEnv == string(EnvLocal) {
 			return string(EnvLocal)
 		}
+	}
+
+	// Check for ECS environment indicators
+	if os.Getenv("ECS_CONTAINER_METADATA_URI") != "" ||
+		os.Getenv("AWS_EXECUTION_ENV") != "" {
+		return string(EnvDev)
 	}
 
 	// Default to local for development
