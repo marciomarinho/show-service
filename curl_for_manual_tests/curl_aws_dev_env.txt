@@ -1,0 +1,31 @@
+***************** "PRODUCTION" *****************
+
+// APIGW_URL="https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com"
+
+CLIENT_ID="YOU_WILL_RECEIVE_VIA_EMAIL"
+CLIENT_SECRET="YOU_WILL_RECEIVE_VIA_EMAIL"
+
+# Get the bearer token
+BEARER_TOKEN=$(
+  curl --location --request POST "https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/oauth/token" \
+    --header "Authorization: Basic <CLIENT_ID:CLIENT_SECRET IN BASE64" \
+    --header 'Content-Type: application/x-www-form-urlencoded' \
+    --data-urlencode 'grant_type=client_credentials' \
+    --data-urlencode 'scope=https://show-service-dev.api/shows.read https://show-service-dev.api/shows.write' \
+    | jq -r '.access_token'
+)
+
+echo "Bearer token: $BEARER_TOKEN"
+
+# Use the token in a subsequent request
+curl --silent --location 'https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/shows' \
+  --header "Authorization: Bearer $BEARER_TOKEN"
+
+  
+curl --location --request POST "$APIGW_URL/shows" \
+  --header "Authorization: Bearer $BEARER_TOKEN" \
+  --header "Content-Type: application/json" \      
+  -d @shows_request.json
+
+
+curl "https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/shows" --header "Authorization: Bearer $BEARER_TOKEN"

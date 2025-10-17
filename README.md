@@ -139,6 +139,14 @@ While DynamoDB was chosen for this implementation, the architecture supports alt
    - Health check: http://localhost:8080/health
    - DynamoDB: http://localhost:8000
 
+6. **Sample screenshots**
+
+### make dev
+
+<img src="./screenshots/make_dev.png" alt="Make Dev">
+
+
+
 ## 📋 API Endpoints
 
 ### Health Check

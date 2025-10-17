@@ -175,7 +175,7 @@ func (s Show) Validate() error {
 	if err := ValidateStringLength(s.TVChannel, 0, 50); err != nil {
 		return fmt.Errorf("tvChannel: %w", err)
 	}
-	if err := ValidateStringLength(s.Description, 0, 200); err != nil {
+	if err := ValidateStringLength(s.Description, 0, 500); err != nil {
 		return fmt.Errorf("description: %w", err)
 	}
 

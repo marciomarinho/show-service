@@ -399,7 +399,7 @@ func TestShow_Validate(t *testing.T) {
 			show: Show{
 				Slug:        "show/testshow",
 				Title:       "Test Show",
-				Description: stringPtr("This is a very long description that exceeds the maximum allowed length of one thousand characters and should fail validation because it's way too long for storage and display purposes in the application interface"),
+				Description: stringPtr("This is a very long description that exceeds the maximum allowed length of 500 characters and should fail validation because it's way too long for storage and display purposes in the application interface. This description is being extended with additional text to ensure it surpasses the 500 character limit for testing the validation logic in the Show model's Validate method. The test case 'description too long' requires a string longer than 500 characters to verify that the validation correctly identifies and rejects overly long descriptions."),
 				Seasons:     &[]Season{},
 			},
 			wantErr: true,

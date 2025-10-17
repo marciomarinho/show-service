@@ -1,0 +1,11 @@
+# Dymmy Payload
+curl -X POST http://localhost:8080/shows -H "Content-Type: application/json" -d '{ "payload": [{ "slug": "test-show", "title": "Test Show", "image": {"showImage": "http://example.com/image.jpg"} }] }'
+
+# Full show json from https://challengeaccepted.streamco.com.au/samples/request.json
+
+ curl -X POST http://localhost:8080/shows \
+      -H "Content-Type: application/json" \
+      -d @shows_request.json
+
+# Get all shows from localhost
+curl --location 'http://localhost:8080/shows'
