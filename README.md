@@ -318,6 +318,10 @@ packages:
 | `DYNAMODB_REGION` | AWS region | us-east-1 |
 | `DYNAMODB_ENDPOINT` | DynamoDB endpoint | http://localhost:8000 |
 | `SHOWS_TABLE` | DynamoDB table name | shows-local |
+| `APP_COGNITO_USER_POOL_ID` | Cognito User Pool ID | - |
+| `APP_COGNITO_CLIENT_ID` | Cognito Client ID | - |
+| `APP_COGNITO_REGION` | Cognito region | - |
+| `APP_COGNITO_JWKS_URL` | Cognito JWKS URL | Auto-constructed |
 
 ### Configuration File
 
@@ -325,13 +329,100 @@ Application configuration is managed through `configs/config.yaml`:
 
 ```yaml
 env: local
+log:
+  level: info
 dynamodb:
   region: us-east-1
   endpoint_override: http://localhost:8000
   shows_table: shows-local
+cognito:
+  user_pool_id: your-user-pool-id
+  client_id: your-client-id
+  region: us-east-1
+  jwks_url: ""  # Auto-constructed if empty
+## 🔐 Authentication
+
+### JWT Token Validation
+
+The application includes JWT token validation middleware for non-local environments (dev/prod). Authentication is handled via AWS Cognito JWT tokens.
+
+### Authentication Flow
+
+1. **Token Extraction**: Bearer token extracted from `Authorization` header
+2. **Environment Check**: Authentication skipped for `local` environment
+3. **Token Validation**: JWT signature and claims validation
+4. **Scope Validation**: Verify token has required scope for the endpoint **and** that the required scope is in the configured valid scopes list
+5. **User Context**: Authenticated user info added to request context
+
+### Protected Endpoints
+
+All endpoints except `/health` require valid JWT authentication:
+
+```http
+GET    /shows     # Requires authentication
+POST   /shows     # Requires authentication
+GET    /health    # Public endpoint
 ```
 
-## 🚢 Deployment
+### Scope Requirements
+
+Different endpoints require different scopes from the configured `valid_scopes` list:
+
+| Endpoint | Method | Required Scope Pattern |
+|----------|--------|------------------------|
+| `/shows` | GET | `*.shows.read` |
+| `/shows` | POST | `*.shows.write` |
+
+**Note**: The required scope is dynamically determined by finding the first configured scope that contains the pattern (e.g., `shows.read` or `shows.write`).
+
+### Example Authentication
+
+```bash
+# Get token from Cognito (example)
+curl -X POST https://your-domain.auth.us-east-1.amazoncognito.com/oauth2/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -u "client_id:client_secret" \
+  -d "grant_type=client_credentials"
+
+# Use token in requests
+curl -X GET http://localhost:8080/shows \
+  -H "Authorization: Bearer your-jwt-token"
+```
+
+### Configuration
+
+Configure Cognito settings in `configs/config.yaml`:
+
+```yaml
+cognito:
+  user_pool_id: us-east-1_XXXXXXXXX
+  client_id: 1a2b3c4d5e6f7g8h9i0j
+  region: us-east-1
+  jwks_url: ""  # Auto-constructed if empty
+  valid_scopes:
+    - "https://show-service-prod.api/shows.read"
+    - "https://show-service-prod.api/shows.write"
+    - "https://show-service-prod.api/admin.read"
+```
+
+### Development Notes
+
+- **Local Environment**: Authentication is bypassed for development
+- **Token Validation**: Currently implements basic format validation
+- **Scope Validation**: Validates against configured `valid_scopes` list
+- **Configuration**: Required scopes must be present in config file's `valid_scopes` array
+- **Production**: Implement full JWT validation with Cognito JWKS
+- **Error Responses**: Returns `401 Unauthorized` for invalid/missing tokens, `403 Forbidden` for insufficient scope
+
+### Future Enhancements
+
+For production deployment, implement complete JWT validation:
+
+1. **JWKS Fetching**: Dynamic retrieval of Cognito public keys
+2. **Token Caching**: Cache public keys to reduce latency
+3. **Claim Validation**: Verify issuer, audience, expiration
+4. **Group Authorization**: Role-based access control
+5. **Token Refresh**: Handle token expiration gracefully
 
 ### Docker Deployment
 

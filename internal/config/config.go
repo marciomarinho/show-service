@@ -24,10 +24,19 @@ type DynamoDB struct {
 	ShowsTable       string `mapstructure:"showsTable"`
 }
 
+type Cognito struct {
+	UserPoolID  string   `mapstructure:"userPoolId"`
+	ClientID    string   `mapstructure:"clientId"`
+	Region      string   `mapstructure:"region"`
+	JWKSURL     string   `mapstructure:"jwksUrl"`
+	ValidScopes []string `mapstructure:"validScopes"`
+}
+
 type Config struct {
 	Env      Env      `mapstructure:"env"`
 	Log      Log      `mapstructure:"log"`
 	DynamoDB DynamoDB `mapstructure:"dynamodb"`
+	Cognito  Cognito  `mapstructure:"cognito"`
 }
 
 func Load() (*Config, error) {

@@ -7,3 +7,12 @@ dynamodb:
   endpointOverride: "http://localhost:8000"
   showsTable: "shows-local"
   createTableIfMissing: true
+cognito:
+  userPoolId: "us-east-1_example"
+  clientId: "example_client_id"
+  region: "us-east-1"
+  jwksUrl: ""
+  validScopes:
+    - "https://show-service-dev.api/shows.read"
+    - "https://show-service-dev.api/shows.write"
+

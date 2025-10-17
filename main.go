@@ -37,7 +37,14 @@ func main() {
 	// HTTP
 	h := handlers.NewShowHandler(svc)
 	r := gin.Default()
+
+	// Apply authentication middleware for non-local environments
+	r.Use(handlers.AuthMiddleware(cfg))
+
+	// Health check endpoint (no auth required)
 	r.GET("/health", handlers.HealthCheck)
+
+	// Protected endpoints
 	r.POST("/shows", h.PostShows)
 	r.GET("/shows", h.GetShows)
 
