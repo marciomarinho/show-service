@@ -8,28 +8,37 @@ A REST API service for managing TV shows, built with Go, Gin, and DynamoDB. This
 show-service/
 ├── configs/                    # Configuration files
 │   └── config.yaml            # Application configuration
-├── curl_and_postman/          # API testing examples
+├── curl_for_manual_tests/      # API testing examples and scripts
 ├── internal/                  # Private application code
 │   ├── config/               # Configuration management
-│   │   └── config.go         # Config loading and validation
+│   │   ├── config.go         # Config loading and validation
+│   │   └── config_test.go    # Configuration tests
 │   ├── database/             # Database layer
 │   │   ├── dynamo.go         # DynamoDB wrapper
 │   │   ├── dynamo_test.go    # Database tests
-│   │   └── mock_dynamoapi.go # Database mocks
+│   │   └── mocks/            # Database mocks
+│   │       └── mock_dynamoapi.go
 │   ├── domain/               # Business logic models
 │   │   ├── model.go          # Data structures and validation
 │   │   └── model_test.go     # Domain tests
 │   ├── handlers/             # HTTP handlers
 │   │   ├── health.go         # Health check endpoint
 │   │   ├── shows.go          # Show CRUD endpoints
-│   │   └── shows_test.go     # Handler tests
+│   │   ├── shows_test.go     # Handler tests
+│   │   └── mocks/            # Handler mocks
+│   │       └── mock_showhandler.go
 │   ├── repository/           # Data access layer
 │   │   ├── show_repo.go      # Show repository implementation
-│   │   └── show_repo_test.go # Repository tests
+│   │   ├── show_repo_test.go # Repository tests
+│   │   └── mocks/            # Repository mocks
+│   │       └── mock_showrepository.go
 │   └── service/              # Business logic layer
 │       ├── show_service.go   # Show service implementation
-│       └── show_service_test.go # Service tests
+│       ├── show_service_test.go # Service tests
+│       └── mocks/            # Service mocks
+│           └── mock_showservice.go
 ├── scripts/                  # Docker and deployment scripts
+├── screenshots/              # Sample screenshots
 ├── .mockery.yml             # Mockery configuration
 ├── Dockerfile               # Application container
 ├── docker-compose.yml       # Local development environment
