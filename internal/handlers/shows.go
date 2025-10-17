@@ -48,7 +48,7 @@ func (h *ShowHTTPHandler) PostShows(c *gin.Context) {
 		return
 	}
 
-	c.Status(http.StatusCreated)
+	c.JSON(http.StatusCreated, gin.H{"message": "Shows created successfully"})
 }
 
 func (h *ShowHTTPHandler) GetShows(c *gin.Context) {

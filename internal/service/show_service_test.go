@@ -8,33 +8,14 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/marciomarinho/show-service/internal/domain"
+	"github.com/marciomarinho/show-service/internal/repository"
 )
-
-// MockShowRepository is a mock implementation of ShowRepository for testing
-type MockShowRepository struct {
-	mock.Mock
-}
-
-func (m *MockShowRepository) Put(s domain.Show) error {
-	args := m.Called(s)
-	return args.Error(0)
-}
-
-func (m *MockShowRepository) List() ([]domain.Show, error) {
-	args := m.Called()
-	return args.Get(0).([]domain.Show), args.Error(1)
-}
-
-// Helper function for creating bool pointers in tests
-func boolPtr(b bool) *bool {
-	return &b
-}
 
 func TestShowSvc_Create(t *testing.T) {
 	tests := []struct {
 		name        string
 		request     domain.Request
-		mockSetup   func(*MockShowRepository)
+		mockSetup   func(*repository.MockShowRepository)
 		expectError bool
 	}{
 		{
@@ -53,7 +34,7 @@ func TestShowSvc_Create(t *testing.T) {
 					},
 				},
 			},
-			mockSetup: func(m *MockShowRepository) {
+			mockSetup: func(m *repository.MockShowRepository) {
 				m.On("Put", mock.AnythingOfType("domain.Show")).Return(nil).Times(2)
 			},
 			expectError: false,
@@ -74,7 +55,7 @@ func TestShowSvc_Create(t *testing.T) {
 					},
 				},
 			},
-			mockSetup: func(m *MockShowRepository) {
+			mockSetup: func(m *repository.MockShowRepository) {
 				m.On("Put", mock.AnythingOfType("domain.Show")).Return(errors.New("database error")).Once()
 			},
 			expectError: true,
@@ -95,7 +76,7 @@ func TestShowSvc_Create(t *testing.T) {
 					},
 				},
 			},
-			mockSetup: func(m *MockShowRepository) {
+			mockSetup: func(m *repository.MockShowRepository) {
 				m.On("Put", mock.AnythingOfType("domain.Show")).Return(nil).Once()
 				m.On("Put", mock.AnythingOfType("domain.Show")).Return(errors.New("database error")).Once()
 			},
@@ -106,7 +87,7 @@ func TestShowSvc_Create(t *testing.T) {
 			request: domain.Request{
 				Payload: []domain.Show{},
 			},
-			mockSetup: func(m *MockShowRepository) {
+			mockSetup: func(m *repository.MockShowRepository) {
 				// No calls expected for empty payload
 			},
 			expectError: false,
@@ -122,7 +103,7 @@ func TestShowSvc_Create(t *testing.T) {
 					},
 				},
 			},
-			mockSetup: func(m *MockShowRepository) {
+			mockSetup: func(m *repository.MockShowRepository) {
 				m.On("Put", mock.AnythingOfType("domain.Show")).Return(nil).Once()
 			},
 			expectError: false,
@@ -131,7 +112,7 @@ func TestShowSvc_Create(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockRepo := new(MockShowRepository)
+			mockRepo := new(repository.MockShowRepository)
 			tt.mockSetup(mockRepo)
 
 			svc := NewShowService(mockRepo)
@@ -199,7 +180,7 @@ func TestShowSvc_List(t *testing.T) {
 				{
 					Slug:  "show/single",
 					Title: "Single Show",
-					Image: nil, // Test nil image handling
+					Image: nil,
 				},
 			},
 			mockError:   nil,
@@ -223,7 +204,7 @@ func TestShowSvc_List(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockRepo := new(MockShowRepository)
+			mockRepo := new(repository.MockShowRepository)
 			mockRepo.On("List").Return(tt.mockShows, tt.mockError)
 
 			svc := NewShowService(mockRepo)
@@ -237,12 +218,10 @@ func TestShowSvc_List(t *testing.T) {
 				require.NotNil(t, response)
 				require.Len(t, response.Response, tt.expectedLen)
 
-				// Verify response structure
 				for i, showResp := range response.Response {
 					require.Equal(t, tt.mockShows[i].Slug, showResp.Slug)
 					require.Equal(t, tt.mockShows[i].Title, showResp.Title)
 
-					// Verify image URL extraction
 					if tt.mockShows[i].Image != nil {
 						require.Equal(t, tt.mockShows[i].Image.ShowImage, showResp.Image)
 					} else {

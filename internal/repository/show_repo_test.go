@@ -9,13 +9,13 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
+	"github.com/marciomarinho/show-service/internal/database"
 	"github.com/marciomarinho/show-service/internal/domain"
-	"github.com/marciomarinho/show-service/internal/repository/mocks"
 )
 
 func TestShowRepo_Put(t *testing.T) {
 	t.Run("valid show insertion", func(t *testing.T) {
-		mockDB := mocks.NewMockDynamoAPI(t)
+		mockDB := database.NewMockDynamoAPI(t)
 
 		// Set up expectations
 		mockDB.On("TableName").Return("test-table").Maybe()
@@ -39,37 +39,35 @@ func TestShowRepo_Put(t *testing.T) {
 	})
 
 	t.Run("empty slug error", func(t *testing.T) {
-		mockDB := mocks.NewMockDynamoAPI(t)
+		mockDB := database.NewMockDynamoAPI(t)
 		repo := NewShowRepository(mockDB)
 
 		err := repo.Put(domain.Show{
-			Slug:    "", // invalid
+			Slug:    "",
 			Title:   "Test Show",
 			Seasons: &[]domain.Season{},
 		})
 		require.Error(t, err)
-		// PutItem should never be called
 		mockDB.AssertNotCalled(t, "PutItem", mock.Anything, mock.Anything)
 	})
 
 	t.Run("validation error", func(t *testing.T) {
-		mockDB := mocks.NewMockDynamoAPI(t)
+		mockDB := database.NewMockDynamoAPI(t)
 		repo := NewShowRepository(mockDB)
 
 		err := repo.Put(domain.Show{
 			Slug:    "show/testshow",
-			Title:   "", // invalid - empty title
+			Title:   "",
 			Seasons: &[]domain.Season{},
 		})
 		require.Error(t, err)
-		// PutItem should never be called due to validation
 		mockDB.AssertNotCalled(t, "PutItem", mock.Anything, mock.Anything)
 	})
 }
 
 func TestShowRepo_List(t *testing.T) {
 	t.Run("successful list with DRM shows", func(t *testing.T) {
-		mockDB := mocks.NewMockDynamoAPI(t)
+		mockDB := database.NewMockDynamoAPI(t)
 
 		mockDB.On("TableName").Return("test-table").Maybe()
 		mockDB.On("Query", mock.Anything, mock.AnythingOfType("*dynamodb.QueryInput")).
@@ -99,7 +97,7 @@ func TestShowRepo_List(t *testing.T) {
 	})
 
 	t.Run("empty result set", func(t *testing.T) {
-		mockDB := mocks.NewMockDynamoAPI(t)
+		mockDB := database.NewMockDynamoAPI(t)
 
 		mockDB.On("TableName").Return("test-table").Maybe()
 		mockDB.On("Query", mock.Anything, mock.AnythingOfType("*dynamodb.QueryInput")).
@@ -113,7 +111,7 @@ func TestShowRepo_List(t *testing.T) {
 	})
 
 	t.Run("scan error", func(t *testing.T) {
-		mockDB := mocks.NewMockDynamoAPI(t)
+		mockDB := database.NewMockDynamoAPI(t)
 
 		mockDB.On("TableName").Return("test-table").Maybe()
 		mockDB.On("Query", mock.Anything, mock.AnythingOfType("*dynamodb.QueryInput")).
@@ -128,4 +126,6 @@ func TestShowRepo_List(t *testing.T) {
 }
 
 // helpers
-func boolPtr(b bool) *bool { return &b }
+func boolPtr(b bool) *bool {
+	return &b
+}

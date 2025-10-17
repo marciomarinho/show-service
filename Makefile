@@ -50,7 +50,7 @@ logs-app: ## Show logs from the application only
 	docker-compose logs -f show-service
 
 # Development workflow
-dev: tidy fmt vet build ## Run development checks (tidy, format, vet, build)
+dev: tidy fmt vet test build ## Run development checks (tidy, format, vet, build)
 
 # Production build
 build-prod: ## Build for production

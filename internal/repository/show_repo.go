@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/marciomarinho/show-service/internal/database"
 	"github.com/marciomarinho/show-service/internal/domain"
 )
 
@@ -17,12 +18,13 @@ type ShowRepository interface {
 }
 
 type ShowRepo struct {
-	db DynamoAPI
+	// db DynamoAPI
+	db database.DynamoAPI
 }
 
 var _ ShowRepository = (*ShowRepo)(nil)
 
-func NewShowRepository(db DynamoAPI) ShowRepository {
+func NewShowRepository(db database.DynamoAPI) ShowRepository {
 	return &ShowRepo{db: db}
 }
 

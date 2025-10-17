@@ -7,8 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/marciomarinho/show-service/internal/config"
+	"github.com/marciomarinho/show-service/internal/database"
 	"github.com/marciomarinho/show-service/internal/handlers"
-	"github.com/marciomarinho/show-service/internal/infra"
 	"github.com/marciomarinho/show-service/internal/repository"
 	"github.com/marciomarinho/show-service/internal/service"
 )
@@ -23,7 +23,7 @@ func main() {
 	}
 
 	// Infra
-	dyn, err := infra.NewDynamo(context.Background(), cfg)
+	dyn, err := database.NewDynamo(context.Background(), cfg)
 	if err != nil {
 		log.Fatalf("dynamo: %v", err)
 	}
