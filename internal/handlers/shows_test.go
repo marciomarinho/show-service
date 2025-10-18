@@ -157,11 +157,11 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 				"totalRecords": 1
 			}`,
 			mockSetup: func(m *serviceMocks.MockShowService) {
-				m.EXPECT().Create(mock.AnythingOfType("domain.Request")).Return(errors.New("database connection failed"))
+				m.EXPECT().Create(mock.AnythingOfType("domain.Request")).Return(errors.New("failed to create show"))
 			},
 			expectedStatus: http.StatusInternalServerError,
 			expectedBody: map[string]interface{}{
-				"error": "database connection failed",
+				"error": "failed to create show",
 			},
 		},
 		{
@@ -310,11 +310,11 @@ func TestShowHTTPHandler_GetShows(t *testing.T) {
 		{
 			name: "service error",
 			mockSetup: func(m *serviceMocks.MockShowService) {
-				m.EXPECT().List().Return((*domain.Response)(nil), errors.New("database query failed"))
+				m.EXPECT().List().Return((*domain.Response)(nil), errors.New("failed to retrieve shows"))
 			},
 			expectedStatus: http.StatusInternalServerError,
 			expectedBody: map[string]interface{}{
-				"error": "database query failed",
+				"error": "failed to retrieve shows",
 			},
 		},
 		{

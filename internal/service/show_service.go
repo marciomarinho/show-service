@@ -1,6 +1,9 @@
 package service
 
 import (
+	"errors"
+	"log"
+
 	"github.com/marciomarinho/show-service/internal/domain"
 	"github.com/marciomarinho/show-service/internal/repository"
 )
@@ -22,7 +25,8 @@ func (s *ShowSvc) Create(request domain.Request) error {
 	// Save all shows in the request payload
 	for _, show := range request.Payload {
 		if err := s.repo.Put(show); err != nil {
-			return err
+			log.Printf("Error creating show %s: %v", show.Slug, err)
+			return errors.New("failed to create show")
 		}
 	}
 	return nil
@@ -31,7 +35,8 @@ func (s *ShowSvc) Create(request domain.Request) error {
 func (s *ShowSvc) List() (*domain.Response, error) {
 	shows, err := s.repo.List()
 	if err != nil {
-		return nil, err
+		log.Printf("Error listing shows: %v", err)
+		return nil, errors.New("failed to retrieve shows")
 	}
 
 	// Convert domain.Show to domain.ShowResponse for API response
