@@ -37,8 +37,10 @@ show-service/
 │       ├── show_service_test.go # Service tests
 │       └── mocks/            # Service mocks
 │           └── mock_showservice.go
-├── scripts/                  # Docker and deployment scripts
-├── screenshots/              # Sample screenshots
+├── integration_tests/          # Integration tests and test data
+│   ├── integration_test.go    # End-to-end integration tests
+│   ├── complete_request.json  # Test request payload
+│   └── expected_complete_response.json # Expected response data
 ├── .mockery.yml             # Mockery configuration
 ├── Dockerfile               # Application container
 ├── docker-compose.yml       # Local development environment
@@ -46,6 +48,41 @@ show-service/
 ├── swagger.yaml             # API specification
 └── main.go                  # Application entry point
 ```
+
+## Makefile Targets
+
+The project includes a Makefile with convenient targets for development and deployment:
+
+### Development Targets
+
+- **`make help`** - Show all available targets and their descriptions
+- **`make tidy`** - Clean up `go.mod` and `go.sum` files
+- **`make fmt`** - Format Go code across the project
+- **`make vet`** - Check for suspicious code constructs
+- **`make test`** - Run unit tests (excludes integration tests)
+- **`make build`** - Build the application binary
+- **`make clean`** - Remove build artifacts
+
+### Testing Targets
+
+- **`make integration-test`** - Run end-to-end integration tests (requires Docker)
+
+### Docker Targets
+
+- **`make start-dynamo`** - Start DynamoDB Local only
+- **`make start`** - Start both DynamoDB Local and the application
+- **`make stop`** - Stop all Docker services
+- **`make restart`** - Restart all Docker services
+- **`make logs`** - Show logs from all services
+- **`make logs-dynamo`** - Show logs from DynamoDB Local only
+- **`make logs-app`** - Show logs from the application only
+
+### Workflow Targets
+
+- **`make dev`** - Run full development checks (tidy, format, vet, test, build)
+- **`make quick-start`** - Build and start everything
+- **`make reset`** - Reset everything (stop, clean, rebuild, start fresh)
+- **`make build-prod`** - Build for production (Linux binary)
 
 ## Design Decisions
 
@@ -154,13 +191,174 @@ While DynamoDB was chosen for this implementation, the architecture supports alt
 
 <img src="./screenshots/make_dev.png" alt="Make Dev">
 
-### make start
+### make start-dynamo
 
 <img src="./screenshots/make_start1.png" alt="Make Start">
 
 <img src="./screenshots/make_start2.png" alt="Make Start">
 
 <img src="./screenshots/make_start3.png" alt="Make Start">
+
+### make start
+
+Starts the application and DynamoDB Local
+
+```bash
+ mm@Ubuntu:/mnt/c/projects/stan/show-service$ make start
+docker-compose up --build
+[+] Building 25.2s (33/33) FINISHED
+ => [internal] load local bake definitions                                                                                                                                             0.0s
+ => => reading from stdin 1.05kB                                                                                                                                                       0.0s
+ => [dynamodb-local internal] load build definition from Dockerfile.dynamodb                                                                                                           0.0s
+ => => transferring dockerfile: 715B                                                                                                                                                   0.0s
+ => [show-service internal] load build definition from Dockerfile                                                                                                                      0.0s
+ => => transferring dockerfile: 612B                                                                                                                                                   0.0s
+ => [dynamodb-local internal] load metadata for docker.io/amazon/dynamodb-local:latest                                                                                                 1.4s
+ => [show-service internal] load metadata for docker.io/library/alpine:latest                                                                                                          1.5s
+ => [show-service internal] load metadata for docker.io/library/golang:1.25.3-alpine                                                                                                   1.4s
+ => [auth] amazon/dynamodb-local:pull token for registry-1.docker.io                                                                                                                   0.0s
+ => [auth] library/alpine:pull token for registry-1.docker.io                                                                                                                          0.0s
+ => [auth] library/golang:pull token for registry-1.docker.io                                                                                                                          0.0s
+ => [dynamodb-local internal] load .dockerignore                                                                                                                                       0.0s
+ => => transferring context: 2B                                                                                                                                                        0.0s
+ => [dynamodb-local 1/5] FROM docker.io/amazon/dynamodb-local:latest@sha256:7ef4a2c45b58c2901e70a4f28e0953a422c2c631baaaf5e2c15e0805740c7752                                           0.0s
+ => => resolve docker.io/amazon/dynamodb-local:latest@sha256:7ef4a2c45b58c2901e70a4f28e0953a422c2c631baaaf5e2c15e0805740c7752                                                          0.0s
+ => [dynamodb-local internal] load build context                                                                                                                                       0.0s
+ => => transferring context: 35B                                                                                                                                                       0.0s
+ => CACHED [dynamodb-local 2/5] RUN yum update -y &&     yum install -y python3 python3-pip &&     pip3 install awscli &&     yum clean all                                            0.0s
+ => CACHED [dynamodb-local 3/5] RUN mkdir -p /root/.aws &&     echo "[default]\naws_access_key_id = dummy\naws_secret_access_key = dummy\nregion = ap-southeast-2" > /root/.aws/crede  0.0s
+ => CACHED [dynamodb-local 4/5] COPY entrypoint.sh /entrypoint.sh                                                                                                                      0.0s
+ => CACHED [dynamodb-local 5/5] RUN chmod +x /entrypoint.sh                                                                                                                            0.0s
+ => [dynamodb-local] exporting to image                                                                                                                                                0.0s
+ => => exporting layers                                                                                                                                                                0.0s
+ => => writing image sha256:0dff854a67e4bf7a97eb0d26a398145c86aea1008280352fa49ccf94009fcf56                                                                                           0.0s
+ => => naming to docker.io/library/show-service-dynamodb-local                                                                                                                         0.0s
+ => [show-service internal] load .dockerignore                                                                                                                                         0.0s
+ => => transferring context: 2B                                                                                                                                                        0.0s
+ => [dynamodb-local] resolving provenance for metadata file                                                                                                                            0.0s
+ => [show-service builder 1/6] FROM docker.io/library/golang:1.25.3-alpine@sha256:aee43c3ccbf24fdffb7295693b6e33b21e01baec1b2a55acc351fde345e9ec34                                     0.0s
+ => [show-service stage-1 1/5] FROM docker.io/library/alpine:latest@sha256:4b7ce07002c69e8f3d704a9c5d6fd3053be500b7f1c69fc0d80990c2ad8dd412                                            0.0s
+ => [show-service internal] load build context                                                                                                                                         2.2s
+ => => transferring context: 62.88kB                                                                                                                                                   2.2s
+ => CACHED [show-service builder 2/6] WORKDIR /app                                                                                                                                     0.0s
+ => CACHED [show-service builder 3/6] COPY go.mod go.sum ./                                                                                                                            0.0s
+ => CACHED [show-service builder 4/6] RUN go mod download                                                                                                                              0.0s
+ => [show-service builder 5/6] COPY . .                                                                                                                                                0.3s
+ => [show-service builder 6/6] RUN CGO_ENABLED=0 GOOS=linux go build -o show-service .                                                                                                20.1s
+ => CACHED [show-service stage-1 2/5] RUN apk --no-cache add ca-certificates                                                                                                           0.0s
+ => CACHED [show-service stage-1 3/5] WORKDIR /root/                                                                                                                                   0.0s
+ => CACHED [show-service stage-1 4/5] COPY --from=builder /app/show-service .                                                                                                          0.0s
+ => CACHED [show-service stage-1 5/5] COPY --from=builder /app/configs ./configs                                                                                                       0.0s
+ => [show-service] exporting to image                                                                                                                                                  0.0s
+ => => exporting layers                                                                                                                                                                0.0s
+ => => writing image sha256:c0885266abe58efe9b0353598aa54cd3e4f5f4142fb758219c753a88815b9bab                                                                                           0.0s
+ => => naming to docker.io/library/show-service-show-service                                                                                                                           0.0s
+ => [show-service] resolving provenance for metadata file                                                                                                                              0.0s
+[+] Running 5/5
+ ✔ show-service-dynamodb-local   Built                                                                                                                                                 0.0s
+ ✔ show-service-show-service     Built                                                                                                                                                 0.0s
+ ✔ Network show-service_default  Created                                                                                                                                               0.1s
+ ✔ Container dynamodb-local      Created                                                                                                                                               0.1s
+ ✔ Container show-service        Created                                                                                                                                               0.1s
+Attaching to dynamodb-local, show-service
+dynamodb-local  | Waiting for DynamoDB Local to start...
+show-service    | [GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+show-service    |
+show-service    | [GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+show-service    |  - using env: export GIN_MODE=release
+show-service    |  - using code:        gin.SetMode(gin.ReleaseMode)
+show-service    |
+show-service    | [GIN-debug] GET    /health                   --> github.com/marciomarinho/show-service/internal/handlers.HealthCheck (4 handlers)
+show-service    | [GIN-debug] POST   /shows                    --> github.com/marciomarinho/show-service/internal/handlers.ShowHandler.PostShows-fm (4 handlers)
+show-service    | [GIN-debug] GET    /shows                    --> github.com/marciomarinho/show-service/internal/handlers.ShowHandler.GetShows-fm (4 handlers)
+show-service    | 2025/10/18 02:59:16 env=local table=shows-local listening=:8080
+show-service    | [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+show-service    | Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+show-service    | [GIN-debug] Listening and serving HTTP on :8080
+dynamodb-local  | Initializing DynamoDB Local with the following configuration:
+dynamodb-local  | Port: 8000
+dynamodb-local  | InMemory:     true
+dynamodb-local  | Version:      3.1.0
+dynamodb-local  | DbPath:       null
+dynamodb-local  | SharedDb:     false
+dynamodb-local  | shouldDelayTransientStatuses: false
+dynamodb-local  | CorsParams:   null
+dynamodb-local  |
+dynamodb-local  | Creating DynamoDB table with GSI...
+dynamodb-local  | {
+dynamodb-local  |     "TableDescription": {
+dynamodb-local  |         "AttributeDefinitions": [
+dynamodb-local  |             {
+dynamodb-local  |                 "AttributeName": "slug",
+dynamodb-local  |                 "AttributeType": "S"
+dynamodb-local  |             },
+dynamodb-local  |             {
+dynamodb-local  |                 "AttributeName": "drmKey",
+dynamodb-local  |                 "AttributeType": "N"
+dynamodb-local  |             },
+dynamodb-local  |             {
+dynamodb-local  |                 "AttributeName": "episodeCount",
+dynamodb-local  |                 "AttributeType": "N"
+dynamodb-local  |             }
+dynamodb-local  |         ],
+dynamodb-local  |         "TableName": "shows-local",
+dynamodb-local  |         "KeySchema": [
+dynamodb-local  |             {
+dynamodb-local  |                 "AttributeName": "slug",
+dynamodb-local  |                 "KeyType": "HASH"
+dynamodb-local  |             }
+dynamodb-local  |         ],
+dynamodb-local  |         "TableStatus": "ACTIVE",
+dynamodb-local  |         "CreationDateTime": 1760756361.763,
+dynamodb-local  |         "ProvisionedThroughput": {
+dynamodb-local  |             "LastIncreaseDateTime": 0.0,
+dynamodb-local  |             "LastDecreaseDateTime": 0.0,
+dynamodb-local  |             "NumberOfDecreasesToday": 0,
+dynamodb-local  |             "ReadCapacityUnits": 0,
+dynamodb-local  |             "WriteCapacityUnits": 0
+dynamodb-local  |         },
+dynamodb-local  |         "TableSizeBytes": 0,
+dynamodb-local  |         "ItemCount": 0,
+dynamodb-local  |         "TableArn": "arn:aws:dynamodb:ddblocal:000000000000:table/shows-local",
+dynamodb-local  |         "BillingModeSummary": {
+dynamodb-local  |             "BillingMode": "PAY_PER_REQUEST",
+dynamodb-local  |             "LastUpdateToPayPerRequestDateTime": 1760756361.763
+dynamodb-local  |         },
+dynamodb-local  |         "GlobalSecondaryIndexes": [
+dynamodb-local  |             {
+dynamodb-local  |                 "IndexName": "gsi_drm_episode",
+dynamodb-local  |                 "KeySchema": [
+dynamodb-local  |                     {
+dynamodb-local  |                         "AttributeName": "drmKey",
+dynamodb-local  |                         "KeyType": "HASH"
+dynamodb-local  |                     },
+dynamodb-local  |                     {
+dynamodb-local  |                         "AttributeName": "episodeCount",
+dynamodb-local  |                         "KeyType": "RANGE"
+dynamodb-local  |                     }
+dynamodb-local  |                 ],
+dynamodb-local  |                 "Projection": {
+dynamodb-local  |                     "ProjectionType": "ALL"
+dynamodb-local  |                 },
+dynamodb-local  |                 "IndexStatus": "ACTIVE",
+dynamodb-local  |                 "IndexSizeBytes": 0,
+dynamodb-local  |                 "ItemCount": 0,
+dynamodb-local  |                 "IndexArn": "arn:aws:dynamodb:ddblocal:000000000000:table/shows-local/index/gsi_drm_episode"
+dynamodb-local  |             }
+dynamodb-local  |         ],
+dynamodb-local  |         "DeletionProtectionEnabled": false
+dynamodb-local  |     }
+dynamodb-local  | }
+dynamodb-local  | Table 'shows-local' created successfully with GSI!
+```
+
+```bash
+docker ps
+ mm@Ubuntu:/mnt/c/projects/stan/show-service$ docker ps
+CONTAINER ID   IMAGE                         COMMAND            CREATED         STATUS         PORTS                                         NAMES
+1100f48f4c00   show-service-show-service     "./show-service"   2 minutes ago   Up 2 minutes   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp   show-service
+ea02b5b850a3   show-service-dynamodb-local   "/entrypoint.sh"   2 minutes ago   Up 2 minutes   0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp   dynamodb-local
+```
 
 ### DynamoDB running on Docker locally
 
@@ -422,7 +620,41 @@ cognito:
   client_id: your-client-id
   region: ap-southeast-2
   jwks_url: ""  # Auto-constructed if empty
+  valid_scopes:
+    - "https://show-service-prod.api/shows.read"
+    - "https://show-service-prod.api/shows.write"
+    - "https://show-service-prod.api/admin.read"
 ```
+## 🧪 Testing
+
+### Unit Tests
+Run all unit tests across the project:
+
+```bash
+make test
+```
+
+This executes `go test ./...` to run tests in all packages, including handlers, services, repositories, and domain models.
+
+### Integration Tests
+Run end-to-end integration tests, which start DynamoDB locally, launch the application, and perform HTTP requests:
+
+```bash
+make integration-test
+```
+
+**Prerequisites:**
+- Docker must be running
+- Ensure no conflicting services on ports 8080 (app) and 8000 (DynamoDB)
+
+**What it tests:**
+- Starts the full application stack (DynamoDB and app) using docker-compose
+- Launches the Go application
+- Sends HTTP requests to `/health` and `/shows` endpoints
+- Verifies responses and data persistence
+
+**Note:** Integration tests are located in `integration_tests/` and run separately from unit tests.
+
 ## Authentication
 
 ### JWT Token Validation

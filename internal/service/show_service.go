@@ -35,7 +35,7 @@ func (s *ShowSvc) List() (*domain.Response, error) {
 	}
 
 	// Convert domain.Show to domain.ShowResponse for API response
-	var showResponses []domain.ShowResponse
+	showResponses := []domain.ShowResponse{}
 	for _, show := range shows {
 		showResponse := domain.ShowResponse{
 			Image: getImageURL(show.Image),

@@ -6,4 +6,24 @@ services:
     container_name: dynamodb-local
     ports:
       - "8000:8000"
+    environment:
+      - AWS_ACCESS_KEY_ID=dummy
+      - AWS_SECRET_ACCESS_KEY=dummy
+      - AWS_DEFAULT_REGION=ap-southeast-2      
+    restart: unless-stopped
+
+  show-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: show-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - dynamodb-local
+    environment:
+      - AWS_ACCESS_KEY_ID=dummy
+      - AWS_SECRET_ACCESS_KEY=dummy
+      - AWS_DEFAULT_REGION=ap-southeast-2
+      - APP_ENV=local
     restart: unless-stopped

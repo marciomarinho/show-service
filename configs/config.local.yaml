@@ -4,13 +4,13 @@ log:
 dynamodb:
   region: "ap-southeast-2"
   # DynamoDB Local endpoint (Docker service name)
-  endpointOverride: "http://localhost:8000"
+  endpointOverride: "http://dynamodb-local:8000"
   showsTable: "shows-local"
   createTableIfMissing: true
 cognito:
   userPoolId: "us-east-1_example"
   clientId: "example_client_id"
-  region: "us-east-1"
+  region: "ap-southeast-2"
   jwksUrl: ""
   validScopes:
     - "https://show-service-dev.api/shows.read"

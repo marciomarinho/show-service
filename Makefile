@@ -22,14 +22,22 @@ build: ## Build the application
 	go build -o show-service .
 
 test: ## Run tests
-	go test ./...
+	go test -count=1 ./internal/...
+
+integration-test: ## Run integration tests (requires Docker for DynamoDB and app)
+	@echo "Starting services..."
+	docker-compose up -d --build
+	@echo "Running integration tests..."
+	go test ./integration_tests || (echo "Tests failed, stopping services..."; docker-compose down; exit 1)
+	@echo "Stopping services..."
+	docker-compose down
 
 clean: ## Clean build artifacts
 	rm -f show-service
 
 # Docker targets
 start-dynamo: ## Start DynamoDB Local only
-	docker-compose up dynamodb-local -d
+	docker-compose up dynamodb-local --build
 
 start: ## Start both DynamoDB Local and the application
 	docker-compose up --build
