@@ -7,7 +7,8 @@ A REST API service for managing TV shows, built with Go, Gin, and DynamoDB. This
 ```
 show-service/
 ├── configs/                    # Configuration files
-│   └── config.yaml            # Application configuration
+│   └── config.dev.yaml         # Application configuration (AWS Dev env)
+│   └── config.local.yaml       # Application configuration (Local env)
 ├── curl_for_manual_tests/      # API testing examples and scripts
 ├── internal/                  # Private application code
 │   ├── config/               # Configuration management
