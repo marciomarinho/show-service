@@ -632,6 +632,19 @@ Run all unit tests across the project:
 
 ```bash
 make test
+
+mm@Ubuntu:/mnt/c/projects/stan/show-service$ make test
+go test -cover -count=1 ./internal/...
+ok      github.com/marciomarinho/show-service/internal/config   0.009s  coverage: 96.7% of statements
+ok      github.com/marciomarinho/show-service/internal/database 0.033s  coverage: 75.0% of statements
+        github.com/marciomarinho/show-service/internal/database/mocks           coverage: 0.0% of statements
+ok      github.com/marciomarinho/show-service/internal/domain   0.013s  coverage: 94.7% of statements
+ok      github.com/marciomarinho/show-service/internal/handlers 0.029s  coverage: 93.1% of statements
+        github.com/marciomarinho/show-service/internal/handlers/mocks           coverage: 0.0% of statements
+ok      github.com/marciomarinho/show-service/internal/repository       0.009s  coverage: 91.3% of statements
+        github.com/marciomarinho/show-service/internal/repository/mocks         coverage: 0.0% of statements
+ok      github.com/marciomarinho/show-service/internal/service  0.008s  coverage: 100.0% of statements
+        github.com/marciomarinho/show-service/internal/service/mocks            coverage: 0.0% of statements
 ```
 
 This executes `go test ./...` to run tests in all packages, including handlers, services, repositories, and domain models.

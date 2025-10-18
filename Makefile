@@ -22,7 +22,7 @@ build: ## Build the application
 	go build -o show-service .
 
 test: ## Run tests
-	go test -count=1 ./internal/...
+	go test -cover -count=1 ./internal/...
 
 integration-test: ## Run integration tests (requires Docker for DynamoDB and app)
 	@echo "Starting services..."
