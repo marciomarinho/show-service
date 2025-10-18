@@ -535,15 +535,3 @@ func TestNewDynamo(t *testing.T) {
 		})
 	}
 }
-
-// Helper function to create test config
-func createTestConfig(env config.Env, region, endpointOverride, tableName string) *config.Config {
-	return &config.Config{
-		Env: env,
-		DynamoDB: config.DynamoDB{
-			Region:           region,
-			EndpointOverride: endpointOverride,
-			ShowsTable:       tableName,
-		},
-	}
-}

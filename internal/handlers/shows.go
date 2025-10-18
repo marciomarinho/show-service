@@ -24,20 +24,20 @@ func NewShowHandler(s service.ShowService) ShowHandler {
 func (h *ShowHTTPHandler) PostShows(c *gin.Context) {
 	var req domain.Request
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Could not decode request: " + err.Error()})
 		return
 	}
 
 	// Validate the request
 	if err := req.Validate(); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Validation failed", "details": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Could not decode request: " + err.Error()})
 		return
 	}
 
 	// Additional validation for each show in the payload
-	for i, show := range req.Payload {
+	for _, show := range req.Payload {
 		if err := show.Validate(); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Show validation failed", "show_index": i, "details": err.Error()})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Could not decode request: " + err.Error()})
 			return
 		}
 	}

@@ -61,7 +61,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody: map[string]interface{}{
-				"error": "invalid character ':' after array element",
+				"error": "Could not decode request: invalid character ':' after array element",
 			},
 		},
 		{
@@ -77,8 +77,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody: map[string]interface{}{
-				"error":   "Validation failed",
-				"details": "payload must contain between 1 and 1000 items",
+				"error": "Could not decode request: payload must contain between 1 and 1000 items",
 			},
 		},
 		{
@@ -99,8 +98,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody: map[string]interface{}{
-				"error":   "Validation failed",
-				"details": "take must be between 1 and 100",
+				"error": "Could not decode request: take must be between 1 and 100",
 			},
 		},
 		{
@@ -121,8 +119,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody: map[string]interface{}{
-				"error":   "Validation failed",
-				"details": "payload[0]: title is required",
+				"error": "Could not decode request: payload[0]: title is required",
 			},
 		},
 		{
@@ -143,8 +140,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody: map[string]interface{}{
-				"error":   "Validation failed",
-				"details": "payload[0]: slug: must be in a valid format.",
+				"error": "Could not decode request: payload[0]: slug: must be in a valid format.",
 			},
 		},
 		{
@@ -190,8 +186,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody: map[string]interface{}{
-				"error":   "Validation failed",
-				"details": "payload[1]: title is required",
+				"error": "Could not decode request: payload[1]: title is required",
 			},
 		},
 		{
@@ -214,8 +209,7 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody: map[string]interface{}{
-				"error":   "Validation failed",
-				"details": "payload must contain between 1 and 1000 items",
+				"error": "Could not decode request: payload must contain between 1 and 1000 items",
 			},
 		},
 	}
