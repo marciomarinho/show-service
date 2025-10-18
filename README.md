@@ -2,7 +2,7 @@
 
 A REST API service for managing TV shows, built with Go, Gin, and DynamoDB. This service provides endpoints for creating and retrieving show information with comprehensive validation and testing.
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 show-service/
@@ -47,7 +47,7 @@ show-service/
 └── main.go                  # Application entry point
 ```
 
-## 🎯 Design Decisions
+## Design Decisions
 
 ### Architecture Pattern
 The application follows a **Clean Architecture** pattern with clear separation of concerns:
@@ -109,7 +109,7 @@ While DynamoDB was chosen for this implementation, the architecture supports alt
 - **go vet**: Static analysis for suspicious code
 - **go fmt**: Code formatting enforcement
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Go 1.25+
@@ -148,7 +148,7 @@ While DynamoDB was chosen for this implementation, the architecture supports alt
    - Health check: http://localhost:8080/health
    - DynamoDB: http://localhost:8000
 
-## 📷 Sample Screenshots
+## Sample Screenshots
 
 ### make dev
 
@@ -184,7 +184,7 @@ While DynamoDB was chosen for this implementation, the architecture supports alt
 
 <img src="./screenshots/go_run_main.go.png" alt="Go Run Main Go">
 
-## 📋 API Endpoints
+## API Endpoints
 
 ### Health Check
 ```http
@@ -259,7 +259,7 @@ curl http://localhost:8080/shows
 
 <img src="./screenshots/localhost_request2.png" alt="Get Shows">
 
-## 🛠️ Development Workflow
+## Development Workflow
 
 ### Using Make (Recommended)
 
@@ -309,7 +309,7 @@ go build -o show-service .
 docker-compose up --build
 ```
 
-## 🧪 Testing
+## Testing
 
 ### Running Tests
 ```bash
@@ -330,7 +330,7 @@ go test ./internal/repository/...
 - **Table-Driven Tests**: Consistent test patterns across packages
 - **Coverage**: Positive, negative, and edge case scenarios
 
-## 🎭 Mock Generation
+## Mock Generation
 
 ### Setting up Mockery
 
@@ -390,7 +390,7 @@ packages:
       ShowHandler:
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -422,7 +422,8 @@ cognito:
   client_id: your-client-id
   region: ap-southeast-2
   jwks_url: ""  # Auto-constructed if empty
-## 🔐 Authentication
+```
+## Authentication
 
 ### JWT Token Validation
 
@@ -545,17 +546,11 @@ The application is designed for AWS deployment with:
 - **Lambda**: Serverless compute (if needed)
 - **CloudWatch**: Logging and monitoring
 
-## 🤝 Contributing
+## Extras
 
 1. **Code Style**: Follow Go conventions and run `make fmt`
 2. **Testing**: Write tests for new features, run `make test`
 3. **Mocks**: Update mocks when interfaces change
 4. **Documentation**: Update README for significant changes
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
----
 
 **Note**: This service assumes `slug` as the primary key for shows. If you need different partitioning strategies or data models, consider the repository pattern which allows for easy data store replacement.
