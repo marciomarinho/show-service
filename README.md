@@ -124,7 +124,8 @@ type Show struct {
 - **Validation**: Enforced via regex pattern matching
 
 #### Alternative Data Stores Considered
-While DynamoDB was chosen for this implementation, the architecture supports alternative data stores:
+While DynamoDB was chosen for this implementation, I could have used other databases, or the code can also be modified and extended to support multiple database types.
+
 - **PostgreSQL/MySQL**: Traditional relational databases
 - **Amazon S3**: JSON storage for simple use cases
 - **Redis**: For caching or session storage
