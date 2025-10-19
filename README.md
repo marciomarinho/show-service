@@ -806,5 +806,3 @@ The application is designed for AWS deployment with:
 
 - This service assumes `slug` as the primary key for shows. If you need different partitioning strategies or data models, consider the repository pattern which allows for easy data store replacement.
 
-- For simplicity, no API Versioning. e.g: /v1/shows
-
