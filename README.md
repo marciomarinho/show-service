@@ -193,15 +193,15 @@ While DynamoDB was chosen for this implementation, I could have used other datab
 
 ### make dev
 
-<img src="./screenshots/make_dev.png" alt="Make Dev">
+<img src="./docs/screenshots/make_dev.png" alt="Make Dev">
 
 ### make start-dynamo
 
-<img src="./screenshots/make_start1.png" alt="Make Start">
+<img src="./docs/screenshots/make_start1.png" alt="Make Start">
 
-<img src="./screenshots/make_start2.png" alt="Make Start">
+<img src="./docs/screenshots/make_start2.png" alt="Make Start">
 
-<img src="./screenshots/make_start3.png" alt="Make Start">
+<img src="./docs/screenshots/make_start3.png" alt="Make Start">
 
 ### make start
 
@@ -366,7 +366,7 @@ ea02b5b850a3   show-service-dynamodb-local   "/entrypoint.sh"   2 minutes ago   
 
 ### DynamoDB running on Docker locally
 
-<img src="./screenshots/dynamodb_docker_local.png" alt="Make Start">
+<img src="./docs/screenshots/dynamodb_docker_local.png" alt="Make Start">
 
 ### Manually querying DynamoDB locally
 
@@ -380,11 +380,11 @@ ea02b5b850a3   show-service-dynamodb-local   "/entrypoint.sh"   2 minutes ago   
     aws dynamodb list-tables --endpoint-url http://localhost:8000
   ```
 
-<img src="./screenshots/dynamodb_docker_local2.png" alt="Make Start">
+<img src="./docs/screenshots/dynamodb_docker_local2.png" alt="Make Start">
 
 ### go run main.go
 
-<img src="./screenshots/go_run_main.go.png" alt="Go Run Main Go">
+<img src="./docs/screenshots/go_run_main.go.png" alt="Go Run Main Go">
 
 ## API Endpoints
 
@@ -412,7 +412,7 @@ curl -X POST http://localhost:8080/v1/shows \
 {"message":"Shows created successfully"}       
 ```
 
-<img src="./screenshots/localhost_request1.png" alt="Post Shows">
+<img src="./docs/screenshots/localhost_request1.png" alt="Post Shows">
 
 #### List Shows
 ```bash
@@ -459,7 +459,7 @@ curl http://localhost:8080/v1/shows
 }
 ```
 
-<img src="./screenshots/localhost_request2.png" alt="Get Shows">
+<img src="./docs/screenshots/localhost_request2.png" alt="Get Shows">
 
 ## Development Workflow
 
