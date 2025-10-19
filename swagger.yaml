@@ -8,6 +8,22 @@ info:
 servers:
   - url: https://unklj1dsse.execute-api.ap-southeast-2.amazonaws.com
 paths:
+  /v1/health:
+    get:
+      summary: Health check
+      description: Check if the service is running
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "ok"
+
   /oauth/token:
     post:
       summary: Get OAuth2 token (Cognito passthrough)
@@ -51,7 +67,7 @@ paths:
                 token_type: "Bearer"
                 expires_in: 3600
 
-  /shows:
+  /v1/shows:
     get:
       summary: List shows
       security:

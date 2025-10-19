@@ -42,11 +42,11 @@ func main() {
 	r.Use(handlers.AuthMiddleware(cfg))
 
 	// Health check endpoint (no auth required)
-	r.GET("/health", handlers.HealthCheck)
+	r.GET("/v1/health", handlers.HealthCheck)
 
 	// Protected endpoints
-	r.POST("/shows", h.PostShows)
-	r.GET("/shows", h.GetShows)
+	r.POST("/v1/shows", h.PostShows)
+	r.GET("/v1/shows", h.GetShows)
 
 	port := 8080
 	log.Printf("env=%s table=%s listening=:%d", cfg.Env, dyn.TableName(), port)

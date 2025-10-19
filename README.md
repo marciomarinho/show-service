@@ -390,13 +390,13 @@ ea02b5b850a3   show-service-dynamodb-local   "/entrypoint.sh"   2 minutes ago   
 
 ### Health Check
 ```http
-GET /health
+GET /v1/health
 ```
 
 ### Shows Management
 ```http
-GET    /shows     # List all shows
-POST   /shows     # Create new shows (batch)
+GET    /v1/shows     # List all shows
+POST   /v1/shows     # Create new shows (batch)
 ```
 
 ### Example Requests
@@ -405,7 +405,7 @@ POST   /shows     # Create new shows (batch)
 ```bash
 cd curl_for_manual_tests
 
-curl -X POST http://localhost:8080/shows \
+curl -X POST http://localhost:8080/v1/shows \
       -H "Content-Type: application/json" \
       -d @shows_request.json
 
@@ -416,7 +416,7 @@ curl -X POST http://localhost:8080/shows \
 
 #### List Shows
 ```bash
-curl http://localhost:8080/shows
+curl http://localhost:8080/v1/shows
 
 {
   "response": [
@@ -723,7 +723,7 @@ BEARER_TOKEN=$(
 )
 
 # Use token in the header for GET requests
-curl -X GET https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/shows \
+curl -X GET https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/v1/shows \
   -H "Authorization: Bearer $BEARER_TOKEN"
 
 # Use token in the header for POST requests
@@ -732,10 +732,10 @@ curl -X GET https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/shows \
 ## Posman - https://www.postman.com/
 ## Insomnia - https://github.com/Kong/insomnia
 ## etc.
-curl --location --request POST https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/shows \
+curl --location --request POST https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/v1/shows \
   --header "Authorization: Bearer $BEARER_TOKEN" \
-  --header "Content-Type: application/json" \      
-  -d @shows_request.json
+  --header 'Content-Type: application/json' \
+  --data @shows_request.json
 
 ```
 

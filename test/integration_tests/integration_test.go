@@ -23,7 +23,7 @@ func TestIntegration(t *testing.T) {
 }
 
 func testHealthCheck(t *testing.T) {
-	resp, err := http.Get("http://localhost:8080/health")
+	resp, err := http.Get("http://localhost:8080/v1/health")
 	if err != nil {
 		t.Fatalf("Failed to reach health endpoint: %v", err)
 	}
@@ -200,9 +200,9 @@ func testShowsIntegration(t *testing.T) {
 			var err error
 
 			if tt.method == "GET" {
-				resp, err = http.Get("http://localhost:8080/shows")
+				resp, err = http.Get("http://localhost:8080/v1/shows")
 			} else if tt.method == "POST" {
-				resp, err = http.Post("http://localhost:8080/shows", "application/json", tt.body)
+				resp, err = http.Post("http://localhost:8080/v1/shows", "application/json", tt.body)
 			}
 
 			if err != nil {

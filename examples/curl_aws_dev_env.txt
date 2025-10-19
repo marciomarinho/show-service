@@ -18,14 +18,14 @@ BEARER_TOKEN=$(
 echo "Bearer token: $BEARER_TOKEN"
 
 # Use the token in a subsequent request
-curl --silent --location 'https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/shows' \
+curl --silent --location 'https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/v1/shows' \
   --header "Authorization: Bearer $BEARER_TOKEN"
 
   
-curl --location --request POST "$APIGW_URL/shows" \
+curl --location --request POST "$APIGW_URL/v1/shows" \
   --header "Authorization: Bearer $BEARER_TOKEN" \
   --header "Content-Type: application/json" \      
   -d @shows_request.json
 
 
-curl "https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/shows" --header "Authorization: Bearer $BEARER_TOKEN"
+curl "https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/v1/shows" --header "Authorization: Bearer $BEARER_TOKEN"
