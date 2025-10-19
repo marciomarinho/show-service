@@ -714,7 +714,7 @@ Different endpoints require different scopes from the configured `valid_scopes` 
 ```bash
 # Get token from Cognito (example)
 BEARER_TOKEN=$(
-  curl --location --request POST "https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/oauth/token" \
+  curl --location --request POST "https://vl36a5hg13.execute-api.ap-southeast-2.amazonaws.com/oauth/token" \
     --header "Authorization: Basic <id:secret encoded in base64>" \
     --header 'Content-Type: application/x-www-form-urlencoded' \
     --data-urlencode 'grant_type=client_credentials' \
@@ -723,7 +723,7 @@ BEARER_TOKEN=$(
 )
 
 # Use token in the header for GET requests
-curl -X GET https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/v1/shows \
+curl -X GET https://vl36a5hg13.execute-api.ap-southeast-2.amazonaws.com/v1/shows \
   -H "Authorization: Bearer $BEARER_TOKEN"
 
 # Use token in the header for POST requests
@@ -732,7 +732,7 @@ curl -X GET https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/v1/shows
 ## Posman - https://www.postman.com/
 ## Insomnia - https://github.com/Kong/insomnia
 ## etc.
-curl --location --request POST https://s2bnkh07ae.execute-api.ap-southeast-2.amazonaws.com/v1/shows \
+curl --location --request POST https://vl36a5hg13.execute-api.ap-southeast-2.amazonaws.com/v1/shows \
   --header "Authorization: Bearer $BEARER_TOKEN" \
   --header 'Content-Type: application/json' \
   --data @shows_request.json
