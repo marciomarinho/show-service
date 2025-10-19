@@ -30,7 +30,6 @@ func (r *ShowRepo) Put(s domain.Show) error {
 		return err
 	}
 
-	// derive GSI helpers if you use them (safe no-op if not)
 	var k int
 	if s.DRM != nil && *s.DRM {
 		k = 1
