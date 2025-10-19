@@ -717,12 +717,15 @@ Different endpoints require different scopes from the configured `valid_scopes` 
 
 ### Example Authentication
 
-* You will need cognito_id and cognito_secret ( provided via email )
+The API is protected using Oauth2 with Cognito.
+So, in order to send requests you will need to get a valid token from Cognito.
+For that, you will also need a cognito_id and cognito_secret ( provided via email )
+and pass them to the curl command as follows:
 
 ```bash
 # Get token from Cognito (example)
 BEARER_TOKEN=$(
-  curl --location --request POST "https://vl36a5hg13.execute-api.ap-southeast-2.amazonaws.com/oauth/token" \
+  curl --location --request POST "https://unklj1dsse.execute-api.ap-southeast-2.amazonaws.com/oauth/token" \
     --header "Authorization: Basic <id:secret encoded in base64>" \
     --header 'Content-Type: application/x-www-form-urlencoded' \
     --data-urlencode 'grant_type=client_credentials' \
@@ -731,7 +734,7 @@ BEARER_TOKEN=$(
 )
 
 # Use token in the header for GET requests
-curl -X GET https://vl36a5hg13.execute-api.ap-southeast-2.amazonaws.com/v1/shows \
+curl -X GET https://unklj1dsse.execute-api.ap-southeast-2.amazonaws.com/v1/shows \
   -H "Authorization: Bearer $BEARER_TOKEN"
 
 # Use token in the header for POST requests
@@ -740,7 +743,7 @@ curl -X GET https://vl36a5hg13.execute-api.ap-southeast-2.amazonaws.com/v1/shows
 ## Posman - https://www.postman.com/
 ## Insomnia - https://github.com/Kong/insomnia
 ## etc.
-curl --location --request POST https://vl36a5hg13.execute-api.ap-southeast-2.amazonaws.com/v1/shows \
+curl --location --request POST https://unklj1dsse.execute-api.ap-southeast-2.amazonaws.com/v1/shows \
   --header "Authorization: Bearer $BEARER_TOKEN" \
   --header 'Content-Type: application/json' \
   --data @shows_request.json
@@ -789,7 +792,7 @@ For production deployment, implement complete JWT validation:
 make build-prod
 
 # Or manually
-CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o show-service .
+CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o show-service ./cmd/server
 
 # Run with Docker Compose
 docker-compose up -d
