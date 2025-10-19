@@ -49,25 +49,20 @@ func Load() (*Config, error) {
 	v.SetDefault("dynamodb.endpointOverride", "")
 	v.SetDefault("dynamodb.createTableIfMissing", false)
 
-	// Determine environment - check for ECS/AWS environment indicators
 	env := determineEnvironment()
 
-	// Set dynamic defaults based on environment
 	v.SetDefault("dynamodb.showsTable", "shows-"+env)
 
-	// Try to load config file if it exists (for local development)
 	if env == string(EnvLocal) {
 		v.SetConfigFile("configs/config.local.yaml")
-		_ = v.ReadInConfig() // optional, won't fail if file doesn't exist
+		_ = v.ReadInConfig()
 	}
 
-	// Try to load environment-specific config file
 	if env == string(EnvDev) {
 		v.SetConfigFile("configs/config.dev.yaml")
-		_ = v.ReadInConfig() // optional, won't fail if file doesn't exist
+		_ = v.ReadInConfig()
 	}
 
-	// Override with environment variables (ECS-friendly)
 	v.SetEnvPrefix("APP")
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "__"))
 	v.AutomaticEnv()
@@ -82,7 +77,7 @@ func Load() (*Config, error) {
 
 // determineEnvironment detects if we're running in ECS/production
 func determineEnvironment() string {
-	// Check APP_ENV explicitly first to allow override
+
 	if appEnv := strings.ToLower(strings.TrimSpace(os.Getenv("APP_ENV"))); appEnv != "" {
 		if appEnv == string(EnvDev) {
 			return string(EnvDev)
@@ -92,12 +87,10 @@ func determineEnvironment() string {
 		}
 	}
 
-	// Check for ECS environment indicators
 	if os.Getenv("ECS_CONTAINER_METADATA_URI") != "" ||
 		os.Getenv("AWS_EXECUTION_ENV") != "" {
 		return string(EnvDev)
 	}
 
-	// Default to local for development
 	return string(EnvLocal)
 }

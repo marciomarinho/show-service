@@ -255,7 +255,7 @@ func TestSeason_Validate(t *testing.T) {
 			season: Season{
 				Slug: "show/test_show",
 			},
-			wantErr: true, // underscores not allowed
+			wantErr: true,
 		},
 	}
 

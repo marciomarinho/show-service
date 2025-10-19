@@ -22,7 +22,6 @@ func NewShowService(repo repository.ShowRepository) ShowService {
 }
 
 func (s *ShowSvc) Create(request domain.Request) error {
-	// Save all shows in the request payload
 	for _, show := range request.Payload {
 		if err := s.repo.Put(show); err != nil {
 			log.Printf("Error creating show %s: %v", show.Slug, err)

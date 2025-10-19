@@ -88,7 +88,6 @@ func TestShowSvc_Create(t *testing.T) {
 				Payload: []domain.Show{},
 			},
 			mockSetup: func(m *repoMocks.MockShowRepository) {
-				// No calls expected for empty payload
 			},
 			expectError: false,
 		},

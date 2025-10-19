@@ -17,7 +17,6 @@ func TestShowRepo_Put(t *testing.T) {
 	t.Run("valid show insertion", func(t *testing.T) {
 		mockDB := dynamoMocks.NewMockDynamoAPI(t)
 
-		// Set up expectations
 		mockDB.On("TableName").Return("test-table").Maybe()
 		mockDB.On("PutItem", mock.Anything, mock.AnythingOfType("*dynamodb.PutItemInput")).
 			Run(func(args mock.Arguments) {

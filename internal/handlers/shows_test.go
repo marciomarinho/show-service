@@ -57,7 +57,6 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 				]
 			}`,
 			mockSetup: func(m *serviceMocks.MockShowService) {
-				// No service call expected due to JSON parsing error
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody: map[string]interface{}{
@@ -73,7 +72,6 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 				"totalRecords": 0
 			}`,
 			mockSetup: func(m *serviceMocks.MockShowService) {
-				// No service call expected due to validation error
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody: map[string]interface{}{
@@ -94,7 +92,6 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 				"totalRecords": 1
 			}`,
 			mockSetup: func(m *serviceMocks.MockShowService) {
-				// No service call expected due to validation error
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody: map[string]interface{}{
@@ -115,7 +112,6 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 				"totalRecords": 1
 			}`,
 			mockSetup: func(m *serviceMocks.MockShowService) {
-				// No service call expected due to show validation error
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody: map[string]interface{}{
@@ -136,7 +132,6 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 				"totalRecords": 1
 			}`,
 			mockSetup: func(m *serviceMocks.MockShowService) {
-				// No service call expected due to show validation error
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody: map[string]interface{}{
@@ -182,7 +177,6 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 				"totalRecords": 2
 			}`,
 			mockSetup: func(m *serviceMocks.MockShowService) {
-				// No service call expected due to second show validation error
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody: map[string]interface{}{
@@ -193,7 +187,6 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 			name:        "large payload - edge case",
 			requestBody: createLargePayload(1000),
 			mockSetup: func(m *serviceMocks.MockShowService) {
-				// Large payload passes validation and should reach service
 				m.EXPECT().Create(mock.AnythingOfType("domain.Request")).Return(nil)
 			},
 			expectedStatus: http.StatusCreated,
@@ -205,7 +198,6 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 			name:        "payload too large - edge case",
 			requestBody: createLargePayload(1001),
 			mockSetup: func(m *serviceMocks.MockShowService) {
-				// No service call expected due to payload size validation
 			},
 			expectedStatus: http.StatusBadRequest,
 			expectedBody: map[string]interface{}{
@@ -216,27 +208,21 @@ func TestShowHTTPHandler_PostShows(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Setup
 			mockSvc := serviceMocks.NewMockShowService(t)
 			tt.mockSetup(mockSvc)
 
 			handler := NewShowHandler(mockSvc)
 
-			// Create test request
 			req, _ := http.NewRequest(http.MethodPost, "/shows", bytes.NewBufferString(tt.requestBody))
 			req.Header.Set("Content-Type", "application/json")
 
-			// Create test response recorder
 			w := httptest.NewRecorder()
 
-			// Create gin context
 			c, _ := gin.CreateTestContext(w)
 			c.Request = req
 
-			// Execute
 			handler.PostShows(c)
 
-			// Assert
 			require.Equal(t, tt.expectedStatus, w.Code)
 
 			var responseBody map[string]interface{}
@@ -323,32 +309,26 @@ func TestShowHTTPHandler_GetShows(t *testing.T) {
 				m.EXPECT().List().Return((*domain.Response)(nil), nil)
 			},
 			expectedStatus: http.StatusOK,
-			expectedBody:   nil, // Gin returns null for nil JSON
+			expectedBody:   nil,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Setup
 			mockSvc := serviceMocks.NewMockShowService(t)
 			tt.mockSetup(mockSvc)
 
 			handler := NewShowHandler(mockSvc)
 
-			// Create test request
 			req, _ := http.NewRequest(http.MethodGet, "/shows", nil)
 
-			// Create test response recorder
 			w := httptest.NewRecorder()
 
-			// Create gin context
 			c, _ := gin.CreateTestContext(w)
 			c.Request = req
 
-			// Execute
 			handler.GetShows(c)
 
-			// Assert
 			require.Equal(t, tt.expectedStatus, w.Code)
 
 			if tt.expectedBody != nil {
@@ -357,7 +337,6 @@ func TestShowHTTPHandler_GetShows(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, tt.expectedBody, responseBody)
 			} else {
-				// For nil response, expect JSON null
 				require.Equal(t, "null", w.Body.String())
 			}
 		})

@@ -11,7 +11,6 @@ import (
 	"github.com/marciomarinho/show-service/internal/config"
 )
 
-// DynamoAPI is the interface your repo uses (easy to mock).
 type DynamoAPI interface {
 	PutItem(ctx context.Context, in *dynamodb.PutItemInput, optFns ...func(*dynamodb.Options)) (*dynamodb.PutItemOutput, error)
 	Query(ctx context.Context, in *dynamodb.QueryInput, optFns ...func(*dynamodb.Options)) (*dynamodb.QueryOutput, error)
@@ -19,7 +18,6 @@ type DynamoAPI interface {
 	TableName() string
 }
 
-// RealDynamo adapts the AWS client to DynamoAPI.
 type RealDynamo struct {
 	Client *dynamodb.Client
 	Table  string

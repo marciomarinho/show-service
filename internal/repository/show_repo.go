@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"errors"
 
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
@@ -11,14 +10,12 @@ import (
 	"github.com/marciomarinho/show-service/internal/domain"
 )
 
-// ShowRepository defines the interface for show repository operations
 type ShowRepository interface {
 	Put(s domain.Show) error
 	List() ([]domain.Show, error)
 }
 
 type ShowRepo struct {
-	// db DynamoAPI
 	db database.DynamoAPI
 }
 
@@ -29,7 +26,6 @@ func NewShowRepository(db database.DynamoAPI) ShowRepository {
 }
 
 func (r *ShowRepo) Put(s domain.Show) error {
-	// Validate before calling Dynamo
 	if err := s.Validate(); err != nil {
 		return err
 	}
@@ -79,7 +75,6 @@ func (r *ShowRepo) List() ([]domain.Show, error) {
 	return items, nil
 }
 
-func awsString(s string) *string { return &s }
-
-// Optional helper to surface clearer errors in tests (not required)
-var ErrInvalidShow = errors.New("invalid show")
+func awsString(s string) *string {
+	return &s
+}

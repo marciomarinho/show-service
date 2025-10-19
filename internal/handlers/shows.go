@@ -28,13 +28,11 @@ func (h *ShowHTTPHandler) PostShows(c *gin.Context) {
 		return
 	}
 
-	// Validate the request
 	if err := req.Validate(); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Could not decode request: " + err.Error()})
 		return
 	}
 
-	// Additional validation for each show in the payload
 	for _, show := range req.Payload {
 		if err := show.Validate(); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Could not decode request: " + err.Error()})
@@ -42,7 +40,6 @@ func (h *ShowHTTPHandler) PostShows(c *gin.Context) {
 		}
 	}
 
-	// Pass the entire request to the service to handle all shows
 	if err := h.svc.Create(req); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

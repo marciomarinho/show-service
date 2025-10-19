@@ -81,20 +81,16 @@ func TestRealDynamo_PutItem(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockClient := mocks.NewMockDynamoAPI(t)
 
-			// Create a test DynamoAPI implementation that uses our mock
 			testAPI := &testDynamoAPI{mock: mockClient}
 
-			// Set up mock expectations
 			if tt.mockError != nil {
 				mockClient.EXPECT().PutItem(tt.ctx, tt.input).Return(nil, tt.mockError)
 			} else {
 				mockClient.EXPECT().PutItem(tt.ctx, tt.input).Return(tt.mockReturn, nil)
 			}
 
-			// Execute
 			output, err := testAPI.PutItem(tt.ctx, tt.input)
 
-			// Assert
 			if tt.expectedError != nil {
 				require.Error(t, err)
 				require.Equal(t, tt.expectedError.Error(), err.Error())
@@ -187,20 +183,16 @@ func TestRealDynamo_Query(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockClient := mocks.NewMockDynamoAPI(t)
 
-			// Create a test DynamoAPI implementation that uses our mock
 			testAPI := &testDynamoAPI{mock: mockClient}
 
-			// Set up mock expectations
 			if tt.mockError != nil {
 				mockClient.EXPECT().Query(tt.ctx, tt.input).Return(nil, tt.mockError)
 			} else {
 				mockClient.EXPECT().Query(tt.ctx, tt.input).Return(tt.mockReturn, nil)
 			}
 
-			// Execute
 			output, err := testAPI.Query(tt.ctx, tt.input)
 
-			// Assert
 			if tt.expectedError != nil {
 				require.Error(t, err)
 				require.Equal(t, tt.expectedError.Error(), err.Error())
@@ -294,20 +286,16 @@ func TestRealDynamo_Scan(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockClient := mocks.NewMockDynamoAPI(t)
 
-			// Create a test DynamoAPI implementation that uses our mock
 			testAPI := &testDynamoAPI{mock: mockClient}
 
-			// Set up mock expectations
 			if tt.mockError != nil {
 				mockClient.EXPECT().Scan(tt.ctx, tt.input).Return(nil, tt.mockError)
 			} else {
 				mockClient.EXPECT().Scan(tt.ctx, tt.input).Return(tt.mockReturn, nil)
 			}
 
-			// Execute
 			output, err := testAPI.Scan(tt.ctx, tt.input)
 
-			// Assert
 			if tt.expectedError != nil {
 				require.Error(t, err)
 				require.Equal(t, tt.expectedError.Error(), err.Error())
@@ -351,16 +339,13 @@ func TestRealDynamo_TableName(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			testAPI := &testDynamoAPI{tableName: tt.table}
 
-			// Execute
 			output := testAPI.TableName()
 
-			// Assert
 			require.Equal(t, tt.expectedOutput, output)
 		})
 	}
 }
 
-// testDynamoAPI is a test implementation of DynamoAPI for testing RealDynamo methods
 type testDynamoAPI struct {
 	mock      *mocks.MockDynamoAPI
 	tableName string
@@ -370,7 +355,6 @@ func (t *testDynamoAPI) PutItem(ctx context.Context, in *dynamodb.PutItemInput, 
 	if t.mock != nil {
 		return t.mock.PutItem(ctx, in, optFns...)
 	}
-	// Simplified test implementation for cases without mock
 	return &dynamodb.PutItemOutput{}, nil
 }
 
@@ -378,7 +362,6 @@ func (t *testDynamoAPI) Query(ctx context.Context, in *dynamodb.QueryInput, optF
 	if t.mock != nil {
 		return t.mock.Query(ctx, in, optFns...)
 	}
-	// Simplified test implementation for cases without mock
 	return &dynamodb.QueryOutput{}, nil
 }
 
@@ -386,7 +369,6 @@ func (t *testDynamoAPI) Scan(ctx context.Context, in *dynamodb.ScanInput, optFns
 	if t.mock != nil {
 		return t.mock.Scan(ctx, in, optFns...)
 	}
-	// Simplified test implementation for cases without mock
 	return &dynamodb.ScanOutput{}, nil
 }
 
@@ -448,7 +430,6 @@ func TestNewDynamo(t *testing.T) {
 				DynamoDB: config.DynamoDB{
 					Region:     "us-east-1",
 					ShowsTable: "shows-local",
-					// EndpointOverride is empty
 				},
 			},
 			expectError: false,
@@ -516,10 +497,8 @@ func TestNewDynamo(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Execute
 			result, err := NewDynamo(tt.ctx, tt.config)
 
-			// Assert
 			if tt.expectError {
 				require.Error(t, err)
 				if tt.errorMsg != "" {

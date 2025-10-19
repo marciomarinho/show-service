@@ -238,7 +238,7 @@ func TestAuth_AuthMiddleware(t *testing.T) {
 			requestPath:    "/shows",
 			requestMethod:  "GET",
 			validScopes:    []string{"https://show-service-dev.api/shows.write"},
-			expectedStatus: http.StatusOK, // Should pass in dev mode when no scope configured
+			expectedStatus: http.StatusOK,
 			expectedBody:   nil,
 		},
 		{
@@ -248,7 +248,7 @@ func TestAuth_AuthMiddleware(t *testing.T) {
 			requestPath:    "/shows",
 			requestMethod:  "POST",
 			validScopes:    []string{"https://show-service-dev.api/shows.read"},
-			expectedStatus: http.StatusOK, // Should pass in dev mode when no scope configured
+			expectedStatus: http.StatusOK,
 			expectedBody:   nil,
 		},
 		{
@@ -258,7 +258,7 @@ func TestAuth_AuthMiddleware(t *testing.T) {
 			requestPath:    "/shows",
 			requestMethod:  "GET",
 			validScopes:    []string{"https://show-service-dev.api/shows.read", "https://show-service-dev.api/shows.write"},
-			expectedStatus: http.StatusOK, // Passes because token scopes include all configured scopes
+			expectedStatus: http.StatusOK,
 			expectedBody:   nil,
 		},
 		{
@@ -268,14 +268,13 @@ func TestAuth_AuthMiddleware(t *testing.T) {
 			requestPath:    "/shows",
 			requestMethod:  "POST",
 			validScopes:    []string{"https://show-service-dev.api/shows.read", "https://show-service-dev.api/shows.write"},
-			expectedStatus: http.StatusOK, // Passes because token scopes include all configured scopes
+			expectedStatus: http.StatusOK,
 			expectedBody:   nil,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Setup config
 			cfg := &config.Config{
 				Env: tt.env,
 				Cognito: config.Cognito{
@@ -283,29 +282,22 @@ func TestAuth_AuthMiddleware(t *testing.T) {
 				},
 			}
 
-			// Create handler
 			handler := AuthMiddleware(cfg)
 
-			// Create test request
 			req, _ := http.NewRequest(tt.requestMethod, tt.requestPath, nil)
 			if tt.authHeader != "" {
 				req.Header.Set("Authorization", tt.authHeader)
 			}
 
-			// Create test response recorder
 			w := httptest.NewRecorder()
 
-			// Create gin context
 			c, _ := gin.CreateTestContext(w)
 			c.Request = req
 
-			// Execute middleware
 			handler(c)
 
-			// Assert status
 			require.Equal(t, tt.expectedStatus, w.Code)
 
-			// Assert response body for error cases
 			if tt.expectedBody != nil {
 				var responseBody map[string]interface{}
 				err := json.Unmarshal(w.Body.Bytes(), &responseBody)
@@ -362,17 +354,13 @@ func TestAuth_GetUserFromContext(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Create gin context
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
 
-			// Setup context
 			tt.setupContext(c)
 
-			// Execute function
 			user, err := GetUserFromContext(c)
 
-			// Assert results
 			if tt.expectedError != "" {
 				require.Error(t, err)
 				require.Equal(t, tt.expectedError, err.Error())

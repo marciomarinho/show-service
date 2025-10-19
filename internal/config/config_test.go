@@ -75,26 +75,21 @@ func TestDetermineEnvironment(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Clear relevant environment variables
 			envKeys := []string{"ECS_CONTAINER_METADATA_URI", "AWS_EXECUTION_ENV", "APP_ENV"}
 			for _, key := range envKeys {
 				os.Unsetenv(key)
 			}
 
-			// Set test environment variables
 			for key, value := range tt.envVars {
 				os.Setenv(key, value)
 			}
 
-			// Call the function
 			result := determineEnvironment()
 
-			// Assert
 			if result != tt.expected {
 				t.Errorf("determineEnvironment() = %v, want %v", result, tt.expected)
 			}
 
-			// Clean up
 			for key := range tt.envVars {
 				os.Unsetenv(key)
 			}
@@ -105,7 +100,7 @@ func TestLoad(t *testing.T) {
 	tests := []struct {
 		name        string
 		envVars     map[string]string
-		setupFiles  func() // Optional function to set up config files
+		setupFiles  func()
 		expectedEnv Env
 		expectError bool
 		validate    func(t *testing.T, cfg *Config)
@@ -168,7 +163,7 @@ func TestLoad(t *testing.T) {
 		{
 			name:        "invalid APP_ENV",
 			envVars:     map[string]string{"APP_ENV": "prod"},
-			expectedEnv: EnvLocal, // Should default to local
+			expectedEnv: EnvLocal,
 			expectError: false,
 		},
 		{
@@ -187,26 +182,21 @@ func TestLoad(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Clear relevant environment variables
 			envKeys := []string{"APP_ENV", "ECS_CONTAINER_METADATA_URI", "AWS_EXECUTION_ENV", "APP_DYNAMODB__REGION", "APP_LOG__LEVEL"}
 			for _, key := range envKeys {
 				os.Unsetenv(key)
 			}
 
-			// Set test environment variables
 			for key, value := range tt.envVars {
 				os.Setenv(key, value)
 			}
 
-			// Setup files if provided
 			if tt.setupFiles != nil {
 				tt.setupFiles()
 			}
 
-			// Call the function
 			cfg, err := Load()
 
-			// Assert error expectation
 			if tt.expectError && err == nil {
 				t.Error("Expected an error, but got none")
 			}
@@ -214,14 +204,12 @@ func TestLoad(t *testing.T) {
 				t.Errorf("Unexpected error: %v", err)
 			}
 
-			// If no error expected, validate the config
 			if !tt.expectError && cfg != nil {
 				if tt.validate != nil {
 					tt.validate(t, cfg)
 				}
 			}
 
-			// Clean up
 			for key := range tt.envVars {
 				os.Unsetenv(key)
 			}
