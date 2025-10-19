@@ -19,7 +19,7 @@ vet: ## Check for suspicious code constructs
 	go vet ./...
 
 build: ## Build the application
-	go build -o show-service .
+	go build -o show-service ./cmd/server
 
 test: ## Run tests
 	go test -cover -count=1 ./internal/...
@@ -28,7 +28,7 @@ integration-test: ## Run integration tests (requires Docker for DynamoDB and app
 	@echo "Starting services..."
 	docker-compose up -d --build
 	@echo "Running integration tests..."
-	go test ./integration_tests || (echo "Tests failed, stopping services..."; docker-compose down; exit 1)
+	go test ./test/integration_tests || (echo "Tests failed, stopping services..."; docker-compose down; exit 1)
 	@echo "Stopping services..."
 	docker-compose down
 
@@ -62,7 +62,7 @@ dev: tidy fmt vet test build ## Run development checks (tidy, format, vet, build
 
 # Production build
 build-prod: ## Build for production
-	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o show-service .
+	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o show-service ./cmd/server
 
 # Quick start for development
 quick-start: ## Quick start: build and start everything

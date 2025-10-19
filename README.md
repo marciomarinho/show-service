@@ -38,10 +38,12 @@ show-service/
 │       ├── show_service_test.go # Service tests
 │       └── mocks/            # Service mocks
 │           └── mock_showservice.go
-├── integration_tests/          # Integration tests and test data
-│   ├── integration_test.go    # End-to-end integration tests
-│   ├── complete_request.json  # Test request payload
-│   └── expected_complete_response.json # Expected response data
+├── test/                       # Integration tests and test data
+│   ├── integration_tests/      # Integration tests
+│   │   ├── integration_test.go # End-to-end integration tests
+│   │   └── data/               # Test data files
+│   │       ├── complete_request.json  # Test request payload
+│   │       └── expected_complete_response.json # Expected response data
 ├── .mockery.yml             # Mockery configuration
 ├── Dockerfile               # Application container
 ├── docker-compose.yml       # Local development environment
@@ -668,7 +670,7 @@ make integration-test
 - Sends HTTP requests to `/health` and `/shows` endpoints
 - Verifies responses and data persistence
 
-**Note:** Integration tests are located in `integration_tests/` and run separately from unit tests.
+**Note:** Integration tests are located in `tests/integration_tests/` and run separately from unit tests.
 
 ## Authentication
 

@@ -13,7 +13,7 @@ RUN go mod download
 COPY . .
 
 # Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -o show-service .
+RUN CGO_ENABLED=0 GOOS=linux go build -o show-service ./cmd/server
 
 # Runtime stage
 FROM alpine:latest

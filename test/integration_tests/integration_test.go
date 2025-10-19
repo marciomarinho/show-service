@@ -46,7 +46,7 @@ func testHealthCheck(t *testing.T) {
 
 func testShowsIntegration(t *testing.T) {
 	// Read test files
-	requestBody, err := os.ReadFile("complete_request.json")
+	requestBody, err := os.ReadFile("data/complete_request.json")
 	if err != nil {
 		t.Fatalf("Failed to read complete_request.json: %v", err)
 	}
