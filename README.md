@@ -7,9 +7,11 @@ A REST API service for managing TV shows, built with Go, Gin, and DynamoDB. This
 ```
 show-service/
 ├── configs/                    # Configuration files
-│   └── config.dev.yaml         # Application configuration (AWS Dev env)
+│   ├── config.dev.yaml         # Application configuration (AWS Dev env)
 │   └── config.local.yaml       # Application configuration (Local env)
-├── curl_for_manual_tests/      # API testing examples and scripts
+├── examples/                   # API testing examples and scripts
+│   ├── curl_aws_dev_env.txt    # AWS development environment curl commands
+│   └── curl_localhost.txt      # Localhost curl commands
 ├── internal/                  # Private application code
 │   ├── config/               # Configuration management
 │   │   ├── config.go         # Config loading and validation
@@ -39,17 +41,23 @@ show-service/
 │       └── mocks/            # Service mocks
 │           └── mock_showservice.go
 ├── test/                       # Integration tests and test data
-│   ├── integration_tests/      # Integration tests
-│   │   ├── integration_test.go # End-to-end integration tests
-│   │   └── data/               # Test data files
-│   │       ├── complete_request.json  # Test request payload
-│   │       └── expected_complete_response.json # Expected response data
+│   └── integration_tests/      # Integration tests
+│       ├── integration_test.go # End-to-end integration tests
+│       └── data/               # Test data files
+│           ├── complete_request.json  # Test request payload
+│           └── expected_complete_response.json # Expected response data
+├── cmd/                        # Main applications
+│   └── server/
+│       └── main.go             # Application entry point
+├── docs/                       # Documentation assets
+│   └── screenshots/            # Screenshots for README
 ├── .mockery.yml             # Mockery configuration
 ├── Dockerfile               # Application container
 ├── docker-compose.yml       # Local development environment
 ├── Makefile                 # Development commands
 ├── swagger.yaml             # API specification
-└── main.go                  # Application entry point
+├── go.mod                   # Go module definition
+└── go.sum                   # Go module checksums
 ```
 
 ## Makefile Targets
