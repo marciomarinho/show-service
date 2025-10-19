@@ -800,4 +800,9 @@ The application is designed for AWS deployment with:
 3. **Mocks**: Update mocks when interfaces change
 4. **Documentation**: Update README for significant changes
 
-**Note**: This service assumes `slug` as the primary key for shows. If you need different partitioning strategies or data models, consider the repository pattern which allows for easy data store replacement.
+**Note**: 
+
+- This service assumes `slug` as the primary key for shows. If you need different partitioning strategies or data models, consider the repository pattern which allows for easy data store replacement.
+
+- For simplicity, no API Versioning. e.g: /v1/shows
+
