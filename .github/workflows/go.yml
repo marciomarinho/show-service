@@ -36,5 +36,12 @@ jobs:
     - name: test
       run: make test
 
+    # This step will be fixed later on in the Makefile.
     - name: integration-test
-      run: make integration-test
+      run: |
+        @echo "Starting services..."
+        docker compose up -d --build
+        @echo "Running integration tests..."
+        go test ./test/integration_tests || (echo "Tests failed, stopping services..."; docker-compose down; exit 1)
+        @echo "Stopping services..."
+        docker compose down
