@@ -26,11 +26,11 @@ test: ## Run tests
 
 integration-test: ## Run integration tests (requires Docker for DynamoDB and app)
 	@echo "Starting services..."
-	docker-compose up -d --build
+	docker compose up -d --build
 	@echo "Running integration tests..."
 	go test ./test/integration_tests || (echo "Tests failed, stopping services..."; docker-compose down; exit 1)
 	@echo "Stopping services..."
-	docker-compose down
+	docker compose down
 
 clean: ## Clean build artifacts
 	rm -f show-service
