@@ -95,6 +95,11 @@ The project includes a Makefile with convenient targets for development and depl
 - **`make reset`** - Reset everything (stop, clean, rebuild, start fresh)
 - **`make build-prod`** - Build for production (Linux binary)
 
+### CI/CD Targets
+
+## Used Github Actions for CI/CD pipeline
+<img src="docs/screenshots/github_actions_cicd.png" alt="Github Actions" width="500">
+
 ## Design Decisions
 
 ### Architecture Pattern
@@ -182,14 +187,14 @@ While DynamoDB was chosen for this implementation, I could have used other datab
    ```bash
    make start-dynamo
    # or
-   docker-compose up dynamodb-local -d
+   docker compose up dynamodb-local -d
    ```
 
 4. **Run the application**
    ```bash
    make start
    # or
-   docker-compose up --build
+   docker compose up --build
    ```
 
 5. **Verify it's running**
@@ -812,6 +817,7 @@ The application is designed for AWS deployment with:
 2. **Testing**: Write tests for new features, run `make test`
 3. **Mocks**: Update mocks when interfaces change
 4. **Documentation**: Update README for significant changes
+
 
 **Note**: 
 
